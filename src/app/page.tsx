@@ -3,29 +3,36 @@
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { NameInput } from "@/features/auth/components/NameInput";
 import { saveUser } from "@/features/auth/api/saveUser";
+import { SurveyForm } from "@/features/survey/components/SurveyForm";
+import { useState } from "react";
 
 export default function Home() {
   const { user, loading } = useAuth();
+  const [userName, setUserName] = useState<string | null>(null);
 
-  if (loading) {
-    return <p className="p-6">Loading...</p>;
+  if (loading) return <p className="p-6">Loading...</p>;
+  if (!user) return null;
+
+  if (!userName) {
+    return (
+      <main className="p-6">
+        <NameInput
+          onSubmit={async (name) => {
+            await saveUser({
+              uid: user.uid,
+              displayName: name,
+              createdAt: new Date(),
+            });
+            setUserName(name);
+          }}
+        />
+      </main>
+    );
   }
-
-  if (!user) {
-    return null;
-  }
-
-  const handleSubmit = async (name: string) => {
-    await saveUser({
-      uid: user.uid,
-      displayName: name,
-      createdAt: new Date(),
-    });
-  };
 
   return (
     <main className="p-6">
-      <NameInput onSubmit={handleSubmit} />
+      <SurveyForm userId={user.uid} userName={userName} />
     </main>
   );
 }
