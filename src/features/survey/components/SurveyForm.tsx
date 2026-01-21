@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Question } from "@/entities/question";
+import { ResultList } from "./ResultList";
 import { getQuestions } from "../api/getQuestions";
 import { submitAnswer } from "../api/submitAnswer";
 
@@ -73,6 +74,7 @@ export const SurveyForm = ({ userId, userName }: Props) => {
       >
         送信
       </button>
+      <ResultList questions={questions} />
     </div>
   );
 };
