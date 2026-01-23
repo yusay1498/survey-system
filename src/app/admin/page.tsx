@@ -2,8 +2,7 @@
 
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { isAdmin } from "@/features/admin/api/isAdmin";
-import { AccessDenied } from "@/features/admin/components/AccessDenied";
-import { InsufficientPermissions } from "@/features/admin/components/InsufficientPermissions";
+import { UnauthorizedAccess } from "@/features/admin/components/UnauthorizedAccess";
 import { AdminDashboard } from "@/features/admin/components/AdminDashboard";
 import { signOut } from "@/features/auth/api/signOut";
 import { useEffect, useState } from "react";
@@ -41,11 +40,11 @@ export default function AdminPage() {
   }
 
   if (!user || user.isAnonymous) {
-    return <AccessDenied onBackToHome={handleBackToHome} />;
+    return <UnauthorizedAccess type="not-logged-in" onAction={handleBackToHome} />;
   }
 
   if (!isAdminUser) {
-    return <InsufficientPermissions uid={user.uid} onLogout={handleLogout} />;
+    return <UnauthorizedAccess type="insufficient-permissions" uid={user.uid} onAction={handleLogout} />;
   }
 
   return (

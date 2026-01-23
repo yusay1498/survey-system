@@ -40,6 +40,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Next.js auto-generated type files
+src/types/validator.ts
+src/types/routes.d.ts
+src/types/cache-life.d.ts
+
 # Compiled class file
 *.class
 
