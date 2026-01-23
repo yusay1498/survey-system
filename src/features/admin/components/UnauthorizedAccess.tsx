@@ -1,13 +1,19 @@
 "use client";
 
-type UnauthorizedAccessProps = {
-  type: "not-logged-in" | "insufficient-permissions";
-  uid?: string;
-  onAction: () => void;
-};
+type UnauthorizedAccessProps =
+  | {
+      type: "not-logged-in";
+      onAction: () => void;
+    }
+  | {
+      type: "insufficient-permissions";
+      uid: string;
+      onAction: () => void;
+    };
 
-export const UnauthorizedAccess = ({ type, uid, onAction }: UnauthorizedAccessProps) => {
+export const UnauthorizedAccess = ({ type, onAction, ...props }: UnauthorizedAccessProps) => {
   const isNotLoggedIn = type === "not-logged-in";
+  const uid = "uid" in props ? props.uid : undefined;
   
   return (
     <div className="p-6 max-w-2xl mx-auto">
