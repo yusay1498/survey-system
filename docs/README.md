@@ -4,6 +4,14 @@
 
 ## 📚 ドキュメント一覧
 
+### [DEVELOPMENT.md](./DEVELOPMENT.md)
+開発環境のセットアップと開発ガイド
+- 環境構築手順
+- 開発サーバーの起動方法
+- ビルドとデプロイ
+- プロジェクト構造
+- Next.js の学習リソース
+
 ### [ADMIN_SETUP.md](./ADMIN_SETUP.md)
 管理者アカウントのセットアップ手順
 - Firebase Authenticationでの管理者ユーザー作成方法
@@ -26,6 +34,7 @@
 
 ## 🚀 クイックスタート
 
-1. [ADMIN_SETUP.md](./ADMIN_SETUP.md) で管理者を設定
-2. [NEXT_STEPS.md](./NEXT_STEPS.md) でアプリケーションをテスト
-3. 詳細は [IMPLEMENTATION_SUMMARY.md](./IMPLEMENTATION_SUMMARY.md) を参照
+1. [DEVELOPMENT.md](./DEVELOPMENT.md) で開発環境をセットアップ
+2. [ADMIN_SETUP.md](./ADMIN_SETUP.md) で管理者を設定
+3. [NEXT_STEPS.md](./NEXT_STEPS.md) でアプリケーションをテスト
+4. 詳細は [IMPLEMENTATION_SUMMARY.md](./IMPLEMENTATION_SUMMARY.md) を参照
