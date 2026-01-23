@@ -11,9 +11,8 @@ type UnauthorizedAccessProps =
       onAction: () => void;
     };
 
-export const UnauthorizedAccess = ({ type, onAction, ...props }: UnauthorizedAccessProps) => {
-  const isNotLoggedIn = type === "not-logged-in";
-  const uid = "uid" in props ? props.uid : undefined;
+export const UnauthorizedAccess = (props: UnauthorizedAccessProps) => {
+  const isNotLoggedIn = props.type === "not-logged-in";
   
   return (
     <div className="p-6 max-w-2xl mx-auto">
@@ -28,13 +27,13 @@ export const UnauthorizedAccess = ({ type, onAction, ...props }: UnauthorizedAcc
             <>
               このアカウントには管理者権限が付与されていません。
               <br />
-              UID: {uid}
+              UID: {props.uid}
             </>
           )}
         </p>
         <button
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          onClick={onAction}
+          onClick={props.onAction}
         >
           {isNotLoggedIn ? "ホームに戻る" : "ログアウト"}
         </button>
