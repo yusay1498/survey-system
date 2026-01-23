@@ -27,43 +27,76 @@ export const QuestionManager = ({ questions, onUpdate }: Props) => {
   };
 
   const handleCreate = async () => {
-    if (!formData.text || formData.options.some((o) => !o)) {
-      alert("すべての項目を入力してください");
+    const validOptions = formData.options.filter((o) => o.trim());
+    
+    if (!formData.text.trim()) {
+      alert("質問文を入力してください");
+      return;
+    }
+    
+    if (validOptions.length < 2) {
+      alert("選択肢を2つ以上入力してください");
       return;
     }
 
-    await createQuestion({
-      text: formData.text,
-      options: formData.options.filter((o) => o),
-      order: formData.order,
-    });
+    try {
+      await createQuestion({
+        text: formData.text,
+        options: validOptions,
+        order: formData.order,
+      });
 
-    resetForm();
-    onUpdate();
+      resetForm();
+      onUpdate();
+    } catch (error) {
+      console.error("質問の作成に失敗しました:", error);
+      alert("質問の作成に失敗しました。もう一度お試しください。");
+    }
   };
 
   const handleUpdate = async () => {
-    if (!editing || !formData.text || formData.options.some((o) => !o)) {
-      alert("すべての項目を入力してください");
+    const validOptions = formData.options.filter((o) => o.trim());
+    
+    if (!editing) {
+      return;
+    }
+    
+    if (!formData.text.trim()) {
+      alert("質問文を入力してください");
+      return;
+    }
+    
+    if (validOptions.length < 2) {
+      alert("選択肢を2つ以上入力してください");
       return;
     }
 
-    await updateQuestion({
-      id: editing.id,
-      text: formData.text,
-      options: formData.options.filter((o) => o),
-      order: formData.order,
-    });
+    try {
+      await updateQuestion({
+        id: editing.id,
+        text: formData.text,
+        options: validOptions,
+        order: formData.order,
+      });
 
-    resetForm();
-    onUpdate();
+      resetForm();
+      onUpdate();
+    } catch (error) {
+      console.error("質問の更新に失敗しました:", error);
+      alert("質問の更新に失敗しました。もう一度お試しください。");
+    }
   };
 
   const handleDelete = async (id: string) => {
     if (!confirm("この質問を削除しますか？")) return;
 
-    await deleteQuestion(id);
-    onUpdate();
+    try {
+      await deleteQuestion(id);
+      onUpdate();
+    } catch (error) {
+      console.error("質問の削除に失敗しました:", error);
+      alert("質問の削除に失敗しました。もう一度お試しください。");
+    }
   };
 
   const startEdit = (question: Question) => {
