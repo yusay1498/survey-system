@@ -20,18 +20,18 @@ export const AdminLoginForm = () => {
   };
 
   return (
-    <div className="p-4 border rounded space-y-2">
+    <div className="p-4 border rounded space-y-2 dark:border-gray-700 dark:bg-gray-800">
       <h2 className="font-bold">管理者ログイン</h2>
 
       <input
-        className="border px-2 py-1 w-full"
+        className="border px-2 py-1 w-full dark:border-gray-600 dark:bg-gray-700 dark:text-white"
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
 
       <input
-        className="border px-2 py-1 w-full"
+        className="border px-2 py-1 w-full dark:border-gray-600 dark:bg-gray-700 dark:text-white"
         type="password"
         placeholder="Password"
         value={password}
@@ -39,7 +39,7 @@ export const AdminLoginForm = () => {
       />
 
       <button
-        className="bg-blue-600 text-white px-3 py-1 rounded w-full"
+        className="bg-blue-600 text-white px-3 py-1 rounded w-full dark:bg-blue-500 dark:hover:bg-blue-600"
         onClick={handleLogin}
         disabled={loading}
       >

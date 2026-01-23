@@ -124,7 +124,7 @@ export const QuestionManager = ({ questions, onUpdate }: Props) => {
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-bold">質問管理</h2>
         <button
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600"
           onClick={startCreate}
         >
           新規質問作成
@@ -134,11 +134,11 @@ export const QuestionManager = ({ questions, onUpdate }: Props) => {
       {/* 質問リスト */}
       <div className="space-y-4">
         {questions.map((q) => (
-          <div key={q.id} className="border rounded p-4 bg-white shadow">
+          <div key={q.id} className="border rounded p-4 bg-white shadow dark:bg-gray-800 dark:border-gray-700">
             <div className="flex justify-between items-start">
               <div className="flex-1">
                 <p className="font-bold mb-2">{q.text}</p>
-                <ul className="ml-4 text-sm text-gray-600">
+                <ul className="ml-4 text-sm text-gray-600 dark:text-gray-400">
                   {q.options.map((opt, idx) => (
                     <li key={idx}>・{opt}</li>
                   ))}
@@ -146,13 +146,13 @@ export const QuestionManager = ({ questions, onUpdate }: Props) => {
               </div>
               <div className="flex gap-2">
                 <button
-                  className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700"
+                  className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
                   onClick={() => startEdit(q)}
                 >
                   編集
                 </button>
                 <button
-                  className="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700"
+                  className="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600"
                   onClick={() => handleDelete(q.id)}
                 >
                   削除
@@ -165,7 +165,7 @@ export const QuestionManager = ({ questions, onUpdate }: Props) => {
 
       {/* 作成・編集フォーム */}
       {(isCreating || editing) && (
-        <div className="border rounded p-6 bg-gray-50 shadow-lg">
+        <div className="border rounded p-6 bg-gray-50 shadow-lg dark:bg-gray-800 dark:border-gray-700">
           <h3 className="text-lg font-bold mb-4">
             {editing ? "質問を編集" : "新規質問"}
           </h3>
@@ -175,7 +175,7 @@ export const QuestionManager = ({ questions, onUpdate }: Props) => {
               <label className="block text-sm font-medium mb-1">質問文</label>
               <input
                 type="text"
-                className="w-full border rounded px-3 py-2"
+                className="w-full border rounded px-3 py-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                 value={formData.text}
                 onChange={(e) =>
                   setFormData({ ...formData, text: e.target.value })
@@ -192,7 +192,7 @@ export const QuestionManager = ({ questions, onUpdate }: Props) => {
                 <div key={idx} className="mb-2 flex gap-2">
                   <input
                     type="text"
-                    className="flex-1 border rounded px-3 py-2"
+                    className="flex-1 border rounded px-3 py-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                     value={opt}
                     onChange={(e) => {
                       const newOptions = [...formData.options];
@@ -203,7 +203,7 @@ export const QuestionManager = ({ questions, onUpdate }: Props) => {
                   />
                   {idx >= 2 && (
                     <button
-                      className="text-red-600 hover:text-red-800"
+                      className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
                       onClick={() => {
                         const newOptions = formData.options.filter(
                           (_, i) => i !== idx
@@ -217,7 +217,7 @@ export const QuestionManager = ({ questions, onUpdate }: Props) => {
                 </div>
               ))}
               <button
-                className="text-blue-600 text-sm hover:text-blue-800"
+                className="text-blue-600 text-sm hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
                 onClick={() =>
                   setFormData({
                     ...formData,
@@ -235,7 +235,7 @@ export const QuestionManager = ({ questions, onUpdate }: Props) => {
               </label>
               <input
                 type="number"
-                className="w-full border rounded px-3 py-2"
+                className="w-full border rounded px-3 py-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                 value={formData.order}
                 onChange={(e) =>
                   setFormData({
@@ -248,13 +248,13 @@ export const QuestionManager = ({ questions, onUpdate }: Props) => {
 
             <div className="flex gap-2 justify-end">
               <button
-                className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
+                className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 dark:bg-gray-600 dark:hover:bg-gray-700"
                 onClick={resetForm}
               >
                 キャンセル
               </button>
               <button
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
                 onClick={editing ? handleUpdate : handleCreate}
               >
                 {editing ? "更新" : "作成"}

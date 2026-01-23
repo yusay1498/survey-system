@@ -43,7 +43,7 @@ export const AdminDashboard = ({ userEmail, userId, onLogout }: Props) => {
       <div className="space-y-8">
         <QuestionManager questions={questions} onUpdate={loadQuestions} />
 
-        <div className="border-t pt-6">
+        <div className="border-t pt-6 dark:border-gray-700">
           <h2 className="text-xl font-bold mb-4">回答結果</h2>
           <ResultList questions={questions} />
         </div>
