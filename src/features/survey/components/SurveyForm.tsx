@@ -65,6 +65,7 @@ export const SurveyForm = ({ userId, userName }: Props) => {
       setSelectedOption(null);
       setShowResults(false);
       setFocusedOptionIndex(0); // Reset focus for next question
+      optionRefs.current = []; // Clear refs for next question
     } else {
       setCompleted(true);
     }
@@ -87,16 +88,17 @@ export const SurveyForm = ({ userId, userName }: Props) => {
       case "Enter":
       case " ":
         e.preventDefault();
-        if (optionRefs.current[focusedOptionIndex]) {
-          optionRefs.current[focusedOptionIndex]?.click();
-        }
+        optionRefs.current[focusedOptionIndex]?.click();
         break;
     }
   };
 
   // Focus the option button when focusedOptionIndex changes
   useEffect(() => {
-    if (!showResults && optionRefs.current[focusedOptionIndex]) {
+    if (!showResults && 
+        focusedOptionIndex >= 0 && 
+        focusedOptionIndex < optionRefs.current.length &&
+        optionRefs.current[focusedOptionIndex]) {
       optionRefs.current[focusedOptionIndex]?.focus();
     }
   }, [focusedOptionIndex, showResults]);
