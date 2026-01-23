@@ -28,8 +28,8 @@ export const SurveyForm = ({ userId, userName }: Props) => {
   }, []);
 
   const handleOptionSelect = async (option: string) => {
-    if (currentQuestionIndex < 0 || currentQuestionIndex >= questions.length) {
-      console.error("Invalid question index");
+    // Prevent multiple simultaneous submissions
+    if (submitting) {
       return;
     }
 
@@ -52,6 +52,7 @@ export const SurveyForm = ({ userId, userName }: Props) => {
     } catch (error) {
       console.error("Failed to submit answer:", error);
       setSubmitting(false);
+      setSelectedOption(null); // Reset selection to allow retry
       alert("回答の送信に失敗しました。もう一度お試しください。");
     }
   };
@@ -67,6 +68,11 @@ export const SurveyForm = ({ userId, userName }: Props) => {
   };
 
   if (loading) return <p>Loading...</p>;
+
+  // Handle empty questions scenario
+  if (questions.length === 0) {
+    return <p>現在、利用可能な質問がありません。</p>;
+  }
 
   if (completed) {
     return (
