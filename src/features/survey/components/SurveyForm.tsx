@@ -71,16 +71,7 @@ export const SurveyForm = ({ userId, userName }: Props) => {
   if (completed) {
     return (
       <div className="space-y-6">
-        <div className="p-6 bg-green-100 border-2 border-green-500 rounded text-center">
-          <h2 className="text-2xl font-bold text-green-800 mb-2">
-            すべての質問に回答しました！
-          </h2>
-          <p className="text-green-700">ご協力ありがとうございました。</p>
-        </div>
-        <div className="mt-6">
-          <h3 className="text-xl font-bold mb-4">全体の結果</h3>
-          <ResultList questions={questions} />
-        </div>
+        <ResultList questions={questions} />
       </div>
     );
   }
