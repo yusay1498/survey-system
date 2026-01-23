@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Question } from "@/entities/question";
 import { ResultList } from "./ResultList";
 import { getQuestions } from "../api/getQuestions";
@@ -19,6 +19,8 @@ export const SurveyForm = ({ userId, userName }: Props) => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [completed, setCompleted] = useState(false);
+  const [focusedOptionIndex, setFocusedOptionIndex] = useState(0);
+  const optionRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   useEffect(() => {
     getQuestions().then((q) => {
@@ -62,10 +64,42 @@ export const SurveyForm = ({ userId, userName }: Props) => {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setSelectedOption(null);
       setShowResults(false);
+      setFocusedOptionIndex(0); // Reset focus for next question
     } else {
       setCompleted(true);
     }
   };
+
+  const handleKeyDown = (e: React.KeyboardEvent, optionsLength: number) => {
+    if (submitting) return;
+
+    switch (e.key) {
+      case "ArrowDown":
+      case "ArrowRight":
+        e.preventDefault();
+        setFocusedOptionIndex((prev) => (prev + 1) % optionsLength);
+        break;
+      case "ArrowUp":
+      case "ArrowLeft":
+        e.preventDefault();
+        setFocusedOptionIndex((prev) => (prev - 1 + optionsLength) % optionsLength);
+        break;
+      case "Enter":
+      case " ":
+        e.preventDefault();
+        if (optionRefs.current[focusedOptionIndex]) {
+          optionRefs.current[focusedOptionIndex]?.click();
+        }
+        break;
+    }
+  };
+
+  // Focus the option button when focusedOptionIndex changes
+  useEffect(() => {
+    if (!showResults && optionRefs.current[focusedOptionIndex]) {
+      optionRefs.current[focusedOptionIndex]?.focus();
+    }
+  }, [focusedOptionIndex, showResults]);
 
   if (loading) return <p>Loading...</p>;
 
@@ -96,19 +130,31 @@ export const SurveyForm = ({ userId, userName }: Props) => {
       </div>
 
       {!showResults ? (
-        <div className="p-6 border-2 rounded-lg bg-white shadow-lg">
+        <div 
+          className="p-6 border-2 rounded-lg bg-white shadow-lg"
+          role="radiogroup"
+          aria-label={currentQuestion.text}
+        >
           <h2 className="text-xl font-bold mb-4">{currentQuestion.text}</h2>
 
-          <div className="space-y-2">
-            {currentQuestion.options.map((opt) => (
+          <div 
+            className="space-y-2"
+            onKeyDown={(e) => handleKeyDown(e, currentQuestion.options.length)}
+          >
+            {currentQuestion.options.map((opt, index) => (
               <button
                 key={opt}
+                ref={(el) => (optionRefs.current[index] = el)}
+                role="radio"
+                aria-checked={selectedOption === opt}
+                tabIndex={index === focusedOptionIndex ? 0 : -1}
                 className={`w-full text-left p-3 border-2 rounded transition-colors ${
                   selectedOption === opt
                     ? "border-blue-500 bg-blue-50"
                     : "border-gray-300 hover:border-blue-300 hover:bg-gray-50"
                 } ${submitting ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                 onClick={() => !submitting && handleOptionSelect(opt)}
+                onFocus={() => setFocusedOptionIndex(index)}
                 disabled={submitting}
               >
                 {opt}
