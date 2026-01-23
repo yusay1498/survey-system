@@ -5,8 +5,7 @@ import { isAdmin } from "@/features/admin/api/isAdmin";
 import { AccessDenied } from "@/features/admin/components/AccessDenied";
 import { InsufficientPermissions } from "@/features/admin/components/InsufficientPermissions";
 import { AdminDashboard } from "@/features/admin/components/AdminDashboard";
-import { firebaseAuth } from "@/lib/firebase";
-import { signOut } from "firebase/auth";
+import { signOut } from "@/features/auth/api/signOut";
 import { useEffect, useState } from "react";
 
 export default function AdminPage() {
@@ -29,7 +28,7 @@ export default function AdminPage() {
   }, [user, loading]);
 
   const handleLogout = async () => {
-    await signOut(firebaseAuth);
+    await signOut();
     window.location.href = "/";
   };
 
