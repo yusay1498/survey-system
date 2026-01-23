@@ -2,45 +2,54 @@
 
 React + Next.js + Firebase を使用したアンケートアプリケーション
 
-## 📖 ドキュメント
+## 📝 概要
 
-詳細なセットアップと使用方法については、[docs](./docs) ディレクトリを参照してください：
+このリポジトリは、管理者がアンケートを作成・管理し、一般ユーザーが匿名で回答できるWebアプリケーションです。
 
-- **[管理者セットアップガイド](./docs/ADMIN_SETUP.md)** - 管理者アカウントの作成方法
-- **[実装内容の説明](./docs/IMPLEMENTATION_SUMMARY.md)** - 技術的な詳細
-- **[次のステップ](./docs/NEXT_STEPS.md)** - テスト手順とトラブルシューティング
+### 主な機能
 
-## Getting Started
+- 👥 **一般ユーザー**: 匿名ログインでアンケートに回答
+- 🔐 **管理者**: メールアドレスでログインし、質問の作成・編集・削除、回答結果の確認
+- 🔥 **Firebase**: Authentication（認証）と Firestore（データベース）を使用
+- ⚡ **リアルタイム**: 回答結果をリアルタイムで表示
 
-First, run the development server:
+## 🚀 クイックスタート
+
+### 1. 開発サーバーの起動
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+ブラウザで [http://localhost:3000](http://localhost:3000) を開く
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 2. 管理者の設定
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Firebase Consoleで管理者アカウントを作成してください。詳細は [管理者セットアップガイド](./docs/ADMIN_SETUP.md) を参照。
 
-## Learn More
+### 3. 使い方
 
-To learn more about Next.js, take a look at the following resources:
+- **一般ユーザー**: ホーム画面で「アンケートに回答する」をクリック
+- **管理者**: メールアドレスとパスワードでログイン → 管理画面で質問を作成
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📖 ドキュメント
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+詳細な情報は [docs](./docs) ディレクトリを参照してください：
 
-## Deploy on Vercel
+- **[開発ガイド](./docs/DEVELOPMENT.md)** - 開発環境のセットアップと開発方法
+- **[管理者セットアップガイド](./docs/ADMIN_SETUP.md)** - 管理者アカウントの作成方法
+- **[実装内容の説明](./docs/IMPLEMENTATION_SUMMARY.md)** - 技術的な詳細と実装内容
+- **[次のステップ](./docs/NEXT_STEPS.md)** - テスト手順とトラブルシューティング
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🛠️ 技術スタック
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Next.js 16 (App Router)
+- React 19
+- TypeScript 5
+- Tailwind CSS 4
+- Firebase (Authentication + Firestore)
+
+## 📄 ライセンス
+
+このプロジェクトのライセンスについては [LICENSE](./LICENSE) ファイルを参照してください。
