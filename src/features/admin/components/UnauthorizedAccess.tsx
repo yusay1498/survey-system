@@ -16,7 +16,11 @@ export const UnauthorizedAccess = (props: UnauthorizedAccessProps) => {
   
   return (
     <div className="p-6 max-w-2xl mx-auto">
-      <div className={`border rounded p-6 ${isNotLoggedIn ? "bg-red-50 dark:bg-red-900" : "bg-yellow-50 dark:bg-yellow-900"}`}>
+      <div className={`border rounded p-6 ${
+        isNotLoggedIn
+          ? "bg-red-50 dark:bg-red-900 border-red-200 dark:border-red-800"
+          : "bg-yellow-50 dark:bg-yellow-900 border-yellow-200 dark:border-yellow-800"
+      }`}>
         <h2 className={`text-xl font-bold mb-2 ${isNotLoggedIn ? "text-red-800 dark:text-red-200" : "text-yellow-800 dark:text-yellow-200"}`}>
           {isNotLoggedIn ? "アクセス権限がありません" : "管理者権限がありません"}
         </h2>
