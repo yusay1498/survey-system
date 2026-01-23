@@ -35,6 +35,15 @@ export const SurveyForm = ({ userId, userName }: Props) => {
       return;
     }
 
+    // Confirmation dialog before submission
+    const confirmSubmit = window.confirm(
+      `「${option}」を選択して回答を送信しますか？\n\n送信後は変更できません。`
+    );
+    
+    if (!confirmSubmit) {
+      return;
+    }
+
     setSelectedOption(option);
     setSubmitting(true);
 
