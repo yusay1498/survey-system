@@ -25,7 +25,7 @@ export const ResultList = ({ questions }: Props) => {
         );
 
         return (
-          <div key={q.id} className="border rounded p-4">
+          <div key={q.id} className="border rounded p-4 dark:border-gray-700 dark:bg-gray-800">
             <h3 className="font-bold mb-2">{q.text}</h3>
 
             {q.options.map((opt) => {
@@ -39,7 +39,7 @@ export const ResultList = ({ questions }: Props) => {
                     {opt}（{picked.length}）
                   </span>
 
-                  <ul className="ml-4 text-sm text-gray-600">
+                  <ul className="ml-4 text-sm text-gray-600 dark:text-gray-400">
                     {picked.map((p) => (
                       <li key={p.id}>・{p.userName}</li>
                     ))}

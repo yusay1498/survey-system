@@ -136,13 +136,13 @@ export const SurveyForm = ({ userId, userName }: Props) => {
 
   return (
     <div className="space-y-6">
-      <div className="mb-4 text-gray-600">
+      <div className="mb-4 text-gray-600 dark:text-gray-400">
         質問 {currentQuestionIndex + 1} / {questions.length}
       </div>
 
       {!showResults ? (
         <div 
-          className="p-6 border-2 rounded-lg bg-white shadow-lg"
+          className="p-6 border-2 rounded-lg bg-white shadow-lg dark:bg-gray-800 dark:border-gray-700"
           role="radiogroup"
           aria-label={currentQuestion.text}
         >
@@ -161,8 +161,8 @@ export const SurveyForm = ({ userId, userName }: Props) => {
                 tabIndex={index === focusedOptionIndex ? 0 : -1}
                 className={`w-full text-left p-3 border-2 rounded transition-colors ${
                   selectedOption === opt
-                    ? "border-blue-500 bg-blue-50"
-                    : "border-gray-300 hover:border-blue-300 hover:bg-gray-50"
+                    ? "border-blue-500 bg-blue-50 dark:bg-blue-900 dark:border-blue-400"
+                    : "border-gray-300 hover:border-blue-300 hover:bg-gray-50 dark:border-gray-600 dark:hover:border-blue-500 dark:hover:bg-gray-700"
                 } ${submitting ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                 onClick={() => !submitting && handleOptionSelect(opt)}
                 onFocus={() => setFocusedOptionIndex(index)}
@@ -174,13 +174,13 @@ export const SurveyForm = ({ userId, userName }: Props) => {
           </div>
 
           {submitting && (
-            <p className="mt-4 text-center text-gray-600">送信中...</p>
+            <p className="mt-4 text-center text-gray-600 dark:text-gray-400">送信中...</p>
           )}
         </div>
       ) : (
         <div className="space-y-6">
-          <div className="p-4 bg-blue-100 border-2 border-blue-500 rounded">
-            <p className="font-bold text-blue-800">
+          <div className="p-4 bg-blue-100 border-2 border-blue-500 rounded dark:bg-blue-900 dark:border-blue-400">
+            <p className="font-bold text-blue-800 dark:text-blue-200">
               あなたの回答: {selectedOption}
             </p>
           </div>
@@ -191,7 +191,7 @@ export const SurveyForm = ({ userId, userName }: Props) => {
           </div>
 
           <button
-            className="w-full bg-green-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-green-700 transition-colors"
+            className="w-full bg-green-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-green-700 transition-colors dark:bg-green-500 dark:hover:bg-green-600"
             onClick={handleNextQuestion}
           >
             {currentQuestionIndex < questions.length - 1
