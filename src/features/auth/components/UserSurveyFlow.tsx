@@ -20,7 +20,7 @@ export const UserSurveyFlow = ({ userId }: Props) => {
             await saveUser({
               uid: userId,
               displayName: name,
-              createdAt: new Date(),
+              createdAt: new Date(), // Not used, kept for type compatibility
             });
             setUserName(name);
           }}

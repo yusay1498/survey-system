@@ -19,10 +19,15 @@ export const AdminDashboard = ({ userEmail, userId, onLogout }: Props) => {
 
   useEffect(() => {
     if (!questionsLoaded) {
-      getQuestions().then((q) => {
-        setQuestions(q);
-        setQuestionsLoaded(true);
-      });
+      getQuestions()
+        .then((q) => {
+          setQuestions(q);
+          setQuestionsLoaded(true);
+        })
+        .catch((error) => {
+          console.error("Failed to load questions:", error);
+          setQuestionsLoaded(true);
+        });
     }
   }, [questionsLoaded]);
 
