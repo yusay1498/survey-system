@@ -28,20 +28,32 @@ export const SurveyForm = ({ userId, userName }: Props) => {
   }, []);
 
   const handleOptionSelect = async (option: string) => {
+    if (currentQuestionIndex < 0 || currentQuestionIndex >= questions.length) {
+      console.error("Invalid question index");
+      return;
+    }
+
     setSelectedOption(option);
     setSubmitting(true);
 
     const currentQuestion = questions[currentQuestionIndex];
-    await submitAnswer({
-      userId,
-      userName,
-      questionId: currentQuestion.id,
-      selectedOption: option,
-      createdAt: new Date(),
-    });
+    
+    try {
+      await submitAnswer({
+        userId,
+        userName,
+        questionId: currentQuestion.id,
+        selectedOption: option,
+        createdAt: new Date(),
+      });
 
-    setSubmitting(false);
-    setShowResults(true);
+      setSubmitting(false);
+      setShowResults(true);
+    } catch (error) {
+      console.error("Failed to submit answer:", error);
+      setSubmitting(false);
+      alert("回答の送信に失敗しました。もう一度お試しください。");
+    }
   };
 
   const handleNextQuestion = () => {
@@ -71,6 +83,11 @@ export const SurveyForm = ({ userId, userName }: Props) => {
         </div>
       </div>
     );
+  }
+
+  // Bounds check for current question index
+  if (currentQuestionIndex < 0 || currentQuestionIndex >= questions.length) {
+    return <p>エラー: 質問が見つかりませんでした。</p>;
   }
 
   const currentQuestion = questions[currentQuestionIndex];
