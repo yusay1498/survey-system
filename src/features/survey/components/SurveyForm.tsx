@@ -155,7 +155,7 @@ export const SurveyForm = ({ userId, userName }: Props) => {
             {currentQuestion.options.map((opt, index) => (
               <button
                 key={opt}
-                ref={(el) => (optionRefs.current[index] = el)}
+                ref={(el) => { optionRefs.current[index] = el; }}
                 role="radio"
                 aria-checked={selectedOption === opt}
                 tabIndex={index === focusedOptionIndex ? 0 : -1}
