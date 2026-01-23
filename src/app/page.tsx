@@ -1,38 +1,27 @@
 "use client";
 
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { NameInput } from "@/features/auth/components/NameInput";
-import { saveUser } from "@/features/auth/api/saveUser";
-import { SurveyForm } from "@/features/survey/components/SurveyForm";
-import { useState } from "react";
+import { LoginSelection } from "@/features/auth/components/LoginSelection";
+import { UserSurveyFlow } from "@/features/auth/components/UserSurveyFlow";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const { user, loading } = useAuth();
-  const [userName, setUserName] = useState<string | null>(null);
+  const router = useRouter();
 
-  if (loading) return <p className="p-6">Loading...</p>;
-  if (!user) return null;
-
-  if (!userName) {
-    return (
-      <main className="p-6">
-        <NameInput
-          onSubmit={async (name) => {
-            await saveUser({
-              uid: user.uid,
-              displayName: name,
-              createdAt: new Date(),
-            });
-            setUserName(name);
-          }}
-        />
-      </main>
-    );
+  // Redirect admin users to admin page
+  if (user && !loading && !user.isAnonymous) {
+    router.push("/admin");
+    return <p className="p-6">管理者画面に移動中...</p>;
   }
 
-  return (
-    <main className="p-6">
-      <SurveyForm userId={user.uid} userName={userName} />
-    </main>
-  );
+  if (loading) return <p className="p-6">Loading...</p>;
+
+  // If no user, show login selection
+  if (!user) {
+    return <LoginSelection />;
+  }
+
+  // Anonymous user flow - show survey
+  return <UserSurveyFlow userId={user.uid} />;
 }

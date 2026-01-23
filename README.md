@@ -1,4 +1,14 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# アンケートシステム (Survey System)
+
+React + Next.js + Firebase を使用したアンケートアプリケーション
+
+## 📖 ドキュメント
+
+詳細なセットアップと使用方法については、[docs](./docs) ディレクトリを参照してください：
+
+- **[管理者セットアップガイド](./docs/ADMIN_SETUP.md)** - 管理者アカウントの作成方法
+- **[実装内容の説明](./docs/IMPLEMENTATION_SUMMARY.md)** - 技術的な詳細
+- **[次のステップ](./docs/NEXT_STEPS.md)** - テスト手順とトラブルシューティング
 
 ## Getting Started
 
