@@ -65,7 +65,8 @@ export function useAsyncData<T>(
         abortControllerRef.current.abort();
       }
     };
-  }, [loadData, ...dependencies]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, dependencies);
 
   return {
     data,
