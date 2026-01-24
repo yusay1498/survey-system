@@ -4,11 +4,13 @@ import { QuestionAnswer } from "@/entities/questionAnswer";
 
 type CreateQuestionAnswerInput = Omit<QuestionAnswer, "id" | "createdAt">;
 
-export async function createQuestionAnswer(input: CreateQuestionAnswerInput): Promise<void> {
+export async function createQuestionAnswer(input: CreateQuestionAnswerInput): Promise<string> {
   const questionAnswersRef = collection(firestore, "questionAnswers");
   
-  await addDoc(questionAnswersRef, {
+  const docRef = await addDoc(questionAnswersRef, {
     ...input,
     createdAt: serverTimestamp(),
   });
+
+  return docRef.id;
 }

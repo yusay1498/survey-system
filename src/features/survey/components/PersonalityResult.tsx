@@ -56,7 +56,7 @@ export const PersonalityResult = ({ userAnswers, pattern, questionAnswers, quest
               if (!detail.questionAnswer) return null;
               
               return (
-                <div key={index} className="space-y-2">
+                <div key={detail.answer.id ?? index} className="space-y-2">
                   {detail.question && (
                     <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                       {detail.question.text}
@@ -116,7 +116,7 @@ export const PersonalityResult = ({ userAnswers, pattern, questionAnswers, quest
             if (!detail.questionAnswer) return null;
             
             return (
-              <div key={index} className="space-y-2">
+              <div key={detail.answer.id ?? index} className="space-y-2">
                 {detail.question && (
                   <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                     {detail.question.text}
