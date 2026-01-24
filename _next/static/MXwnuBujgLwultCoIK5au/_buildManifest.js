@@ -3,8 +3,8 @@ self.__BUILD_MANIFEST = {
     "afterFiles": [],
     "beforeFiles": [
       {
-        "source": "/my-pages//_next/:path+",
-        "destination": "/my-pages/_next/:path+"
+        "source": "/survey-system//_next/:path+",
+        "destination": "/survey-system/_next/:path+"
       }
     ],
     "fallback": []
