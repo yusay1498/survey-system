@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { watchResults } from "../api/watchResults";
 import { getQuestionAnswers } from "../api/getQuestionAnswers";
 import { findMatchingQuestionAnswer } from "../lib/matchQuestionAnswer";
+import { QuestionPersonalizedAnswer } from "./QuestionPersonalizedAnswer";
 import { Answer } from "@/entities/answer";
 import { Question } from "@/entities/question";
 import { QuestionAnswer } from "@/entities/questionAnswer";
@@ -73,14 +74,8 @@ export const ResultList = ({ questions }: Props) => {
 
                   {/* パーソナライズな回答結果を表示 */}
                   {matchedQuestionAnswer && (
-                    <div className="mt-2 ml-4 p-4 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg text-white shadow-md">
-                      <h4 className="text-lg font-bold mb-1">{matchedQuestionAnswer.name}</h4>
-                      <p className="text-sm leading-relaxed">{matchedQuestionAnswer.message}</p>
-                      {matchedQuestionAnswer.description && (
-                        <p className="mt-2 text-xs leading-relaxed opacity-90">
-                          {matchedQuestionAnswer.description}
-                        </p>
-                      )}
+                    <div className="mt-2 ml-4">
+                      <QuestionPersonalizedAnswer questionAnswer={matchedQuestionAnswer} />
                     </div>
                   )}
 
