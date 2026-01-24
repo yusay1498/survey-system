@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { Question } from "@/entities/question";
 import { Answer } from "@/entities/answer";
 import { ResultPattern } from "@/entities/resultPattern";
@@ -25,6 +25,16 @@ type Props = {
   userName: string;
 };
 
+// LocalStorageに保存する進捗データの型
+type SurveyProgress = {
+  currentQuestionIndex: number;
+  showResults: boolean;
+  completed: boolean;
+  userAnswers: Answer[];
+  selectedOption: string | null;
+  matchedPatternId: string | null;
+};
+
 export const SurveyForm = ({ userId, userName }: Props) => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -42,6 +52,41 @@ export const SurveyForm = ({ userId, userName }: Props) => {
   const [questionAnswers, setQuestionAnswers] = useState<QuestionAnswer[]>([]);
   const [currentQuestionAnswer, setCurrentQuestionAnswer] = useState<QuestionAnswer | null>(null);
 
+  // LocalStorageのキー
+  const storageKey = `survey_progress_${userId}`;
+
+  // 進捗を保存
+  const saveProgress = useCallback((progress: Partial<SurveyProgress>) => {
+    try {
+      const currentProgress = localStorage.getItem(storageKey);
+      const existingProgress = currentProgress ? JSON.parse(currentProgress) : {};
+      const updatedProgress = { ...existingProgress, ...progress };
+      localStorage.setItem(storageKey, JSON.stringify(updatedProgress));
+    } catch (error) {
+      console.error("Failed to save progress:", error);
+    }
+  }, [storageKey]);
+
+  // 進捗を読み込み
+  const loadProgress = useCallback((): SurveyProgress | null => {
+    try {
+      const saved = localStorage.getItem(storageKey);
+      return saved ? JSON.parse(saved) : null;
+    } catch (error) {
+      console.error("Failed to load progress:", error);
+      return null;
+    }
+  }, [storageKey]);
+
+  // 進捗をクリア
+  const clearProgress = useCallback(() => {
+    try {
+      localStorage.removeItem(storageKey);
+    } catch (error) {
+      console.error("Failed to clear progress:", error);
+    }
+  }, [storageKey]);
+
   useEffect(() => {
     Promise.all([
       getQuestions(),
@@ -52,6 +97,23 @@ export const SurveyForm = ({ userId, userName }: Props) => {
         setQuestions(fetchedQuestions);
         setResultPatterns(fetchedPatterns);
         setQuestionAnswers(fetchedQuestionAnswers);
+
+        // 保存された進捗を復元
+        const savedProgress = loadProgress();
+        if (savedProgress) {
+          setCurrentQuestionIndex(savedProgress.currentQuestionIndex || 0);
+          setShowResults(savedProgress.showResults || false);
+          setCompleted(savedProgress.completed || false);
+          setUserAnswers(savedProgress.userAnswers || []);
+          setSelectedOption(savedProgress.selectedOption || null);
+          
+          // マッチしたパターンを復元
+          if (savedProgress.matchedPatternId && savedProgress.completed) {
+            const pattern = fetchedPatterns.find(p => p.id === savedProgress.matchedPatternId);
+            setMatchedPattern(pattern || null);
+          }
+        }
+
         setLoading(false);
       })
       .catch((error) => {
@@ -59,7 +121,7 @@ export const SurveyForm = ({ userId, userName }: Props) => {
         setLoadError(true);
         setLoading(false);
       });
-  }, []);
+  }, [loadProgress]);
 
   const handleOptionSelect = async (option: string) => {
     // Prevent multiple simultaneous submissions
@@ -87,7 +149,8 @@ export const SurveyForm = ({ userId, userName }: Props) => {
       await submitAnswer(newAnswer);
 
       // Store answer in state to avoid race condition when matching patterns
-      setUserAnswers(prev => [...prev, { ...newAnswer, id: `${userId}-${currentQuestion.id}` }]);
+      const updatedAnswers = [...userAnswers, { ...newAnswer, id: `${userId}-${currentQuestion.id}` }];
+      setUserAnswers(updatedAnswers);
 
       // 質問ごとのパーソナライズな回答を検索
       const matchedQuestionAnswer = findMatchingQuestionAnswer(
@@ -99,6 +162,15 @@ export const SurveyForm = ({ userId, userName }: Props) => {
 
       setSubmitting(false);
       setShowResults(true);
+
+      // 進捗を保存
+      saveProgress({
+        currentQuestionIndex,
+        showResults: true,
+        selectedOption: option,
+        userAnswers: updatedAnswers,
+        completed: false,
+      });
     } catch (error) {
       setSubmitting(false);
       setSelectedOption(null); // Reset selection to allow retry
@@ -108,23 +180,53 @@ export const SurveyForm = ({ userId, userName }: Props) => {
 
   const handleNextQuestion = async () => {
     if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      const nextIndex = currentQuestionIndex + 1;
+      setCurrentQuestionIndex(nextIndex);
       setSelectedOption(null);
       setShowResults(false);
       setCurrentQuestionAnswer(null); // リセット
       setFocusedOptionIndex(0); // Reset focus for next question
       optionRefs.current = []; // Clear refs for next question
+
+      // 進捗を保存
+      saveProgress({
+        currentQuestionIndex: nextIndex,
+        showResults: false,
+        selectedOption: null,
+        userAnswers,
+        completed: false,
+      });
     } else {
       // All questions completed - calculate result from locally stored answers
       try {
         const pattern = findMatchingPattern(userAnswers, resultPatterns);
         setMatchedPattern(pattern);
         setCompleted(true);
+
+        // 完了状態を保存
+        saveProgress({
+          currentQuestionIndex,
+          showResults: false,
+          selectedOption: null,
+          userAnswers,
+          completed: true,
+          matchedPatternId: pattern?.id || null,
+        });
       } catch (error) {
         console.error("Failed to calculate result pattern:", error);
         // Still show completion screen even if pattern matching fails
         // User will see the default completion message
         setCompleted(true);
+
+        // 完了状態を保存（パターンなし）
+        saveProgress({
+          currentQuestionIndex,
+          showResults: false,
+          selectedOption: null,
+          userAnswers,
+          completed: true,
+          matchedPatternId: null,
+        });
       }
     }
   };
@@ -204,6 +306,20 @@ export const SurveyForm = ({ userId, userName }: Props) => {
             全体の集計結果
           </h3>
           <ResultList questions={questions} />
+        </div>
+
+        <div className="mt-6 flex justify-center">
+          <button
+            className="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-blue-700 transition-colors dark:bg-blue-500 dark:hover:bg-blue-600"
+            onClick={async () => {
+              // 進捗をクリア
+              clearProgress();
+              // ページをリロードして初期画面に戻る
+              window.location.href = '/';
+            }}
+          >
+            ホームに戻る
+          </button>
         </div>
       </div>
     );
