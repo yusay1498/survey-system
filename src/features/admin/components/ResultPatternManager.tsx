@@ -47,16 +47,15 @@ export const ResultPatternManager = ({ patterns, questions, onUpdate }: Props) =
     setIsCreating(false);
   };
 
-  const handleCreate = async () => {
-    // Validation
+  const validateForm = (): ResultCondition[] | null => {
     if (!formData.name.trim()) {
       alert("結果パターン名を入力してください");
-      return;
+      return null;
     }
     
     if (!formData.message.trim()) {
       alert("メッセージを入力してください");
-      return;
+      return null;
     }
 
     const validConditions = formData.conditions.filter(
@@ -65,8 +64,15 @@ export const ResultPatternManager = ({ patterns, questions, onUpdate }: Props) =
 
     if (validConditions.length === 0) {
       alert("少なくとも1つの条件を設定してください");
-      return;
+      return null;
     }
+
+    return validConditions;
+  };
+
+  const handleCreate = async () => {
+    const validConditions = validateForm();
+    if (!validConditions) return;
 
     try {
       await createResultPattern({
@@ -91,25 +97,8 @@ export const ResultPatternManager = ({ patterns, questions, onUpdate }: Props) =
       return;
     }
 
-    // Validation
-    if (!formData.name.trim()) {
-      alert("結果パターン名を入力してください");
-      return;
-    }
-    
-    if (!formData.message.trim()) {
-      alert("メッセージを入力してください");
-      return;
-    }
-
-    const validConditions = formData.conditions.filter(
-      (c) => c.questionId && c.selectedOption.trim()
-    );
-
-    if (validConditions.length === 0) {
-      alert("少なくとも1つの条件を設定してください");
-      return;
-    }
+    const validConditions = validateForm();
+    if (!validConditions) return;
 
     try {
       await updateResultPattern({
@@ -148,7 +137,7 @@ export const ResultPatternManager = ({ patterns, questions, onUpdate }: Props) =
       name: pattern.name,
       message: pattern.message,
       description: pattern.description || "",
-      conditions: [...pattern.conditions, { questionId: "", selectedOption: "" }],
+      conditions: [...pattern.conditions],
       priority: pattern.priority,
       order: pattern.order,
     });
