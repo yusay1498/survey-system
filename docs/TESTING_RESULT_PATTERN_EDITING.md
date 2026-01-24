@@ -15,6 +15,21 @@
    NEXT_PUBLIC_FIREBASE_APP_ID=xxx
    ```
 3. 管理者アカウントが作成されている
+4. Firestore セキュリティルールが最新の管理用設定に更新されている
+   - 本ドキュメントの以前のバージョンで案内していた一時的なルールは **2024-08-23** に有効期限切れとなっています
+   - `resultPatterns` コレクションに対する **create / update / delete** を行うには、管理画面からのアクセスを許可するカスタムルールを設定してください
+   - 例（必要に応じてプロジェクトの要件に合わせて調整してください）:
+     ```rules
+     rules_version = '2';
+     service cloud.firestore {
+       match /databases/{database}/documents {
+         match /resultPatterns/{patternId} {
+           allow read: if true; // 例: 全ユーザーが閲覧可能な場合
+           allow create, update, delete: if request.auth.token.admin == true;
+         }
+       }
+     }
+     ```
 
 ## テスト手順
 

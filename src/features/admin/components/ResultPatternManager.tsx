@@ -58,13 +58,35 @@ export const ResultPatternManager = ({ patterns, questions, onUpdate }: Props) =
       return null;
     }
 
-    const validConditions = formData.conditions.filter(
-      (c) => c.questionId && c.selectedOption.trim()
-    );
+    const validConditions = formData.conditions.filter((c) => {
+      // 基本的なチェック: questionIdと selectedOptionが存在するか
+      if (!c.questionId || !c.selectedOption.trim()) {
+        return false;
+      }
+      
+      // questionIdが現在の質問リストに存在するかチェック
+      const question = questions.find((q) => q.id === c.questionId);
+      if (!question) {
+        return false;
+      }
+      
+      // selectedOptionが質問の選択肢に存在するかチェック
+      if (!question.options.includes(c.selectedOption)) {
+        return false;
+      }
+      
+      return true;
+    });
 
     if (validConditions.length === 0) {
-      alert("少なくとも1つの条件を設定してください");
+      alert("少なくとも1つの有効な条件を設定してください");
       return null;
+    }
+
+    // 無効な条件が含まれていた場合は警告
+    const invalidCount = formData.conditions.length - validConditions.length;
+    if (invalidCount > 0) {
+      alert(`${invalidCount}件の無効な条件が除外されました。削除された質問や選択肢を参照している条件は保存できません。`);
     }
 
     return validConditions;
@@ -178,7 +200,14 @@ export const ResultPatternManager = ({ patterns, questions, onUpdate }: Props) =
   // Get question text by ID
   const getQuestionText = (questionId: string): string => {
     const question = questions.find((q) => q.id === questionId);
-    return question ? question.text : questionId;
+    if (question) {
+      return question.text;
+    }
+    // 質問が存在しない場合は明確な警告を表示
+    if (!questionId) {
+      return "";
+    }
+    return `削除された質問 (ID: ${questionId})`;
   };
 
   // Get options for a specific question
