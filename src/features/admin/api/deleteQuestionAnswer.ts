@@ -1,7 +1,7 @@
 import { doc, deleteDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { firestore } from "@/lib/firebase";
 
 export async function deleteQuestionAnswer(id: string): Promise<void> {
-  const questionAnswerRef = doc(db, "questionAnswers", id);
+  const questionAnswerRef = doc(firestore, "questionAnswers", id);
   await deleteDoc(questionAnswerRef);
 }

@@ -170,6 +170,7 @@ export const QuestionAnswerManager = ({ questionAnswers, questions, onUpdate }: 
   };
 
   // 質問IDから質問テキストを取得
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getQuestionText = (questionId: string): string => {
     const question = questions.find((q) => q.id === questionId);
     if (question) {

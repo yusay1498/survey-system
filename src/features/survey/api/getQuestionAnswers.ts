@@ -1,9 +1,9 @@
 import { collection, query, getDocs, orderBy } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { firestore } from "@/lib/firebase";
 import { QuestionAnswer } from "@/entities/questionAnswer";
 
 export async function getQuestionAnswers(): Promise<QuestionAnswer[]> {
-  const questionAnswersRef = collection(db, "questionAnswers");
+  const questionAnswersRef = collection(firestore, "questionAnswers");
   const q = query(questionAnswersRef, orderBy("order", "asc"));
   const snapshot = await getDocs(q);
   
