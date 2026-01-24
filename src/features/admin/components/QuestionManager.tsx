@@ -2,7 +2,7 @@
 
 import { Question } from "@/entities/question";
 import { createQuestion, updateQuestion, deleteQuestion } from "@/features/admin";
-import type { QuestionFormData } from "@/features/admin";
+import type { QuestionFormData, QuestionManagerProps } from "@/features/admin";
 import {
   validateQuestionForm,
   handleError,
@@ -15,18 +15,13 @@ import {
   UI_CONSTANTS,
 } from "@/lib/constants";
 
-type Props = {
-  questions: Question[];
-  onUpdate: () => void;
-};
-
 const createInitialFormData = (): QuestionFormData => ({
   text: "",
   options: Array(UI_CONSTANTS.DEFAULT_OPTIONS_COUNT).fill(""),
   order: 0,
 });
 
-export const QuestionManager = ({ questions, onUpdate }: Props) => {
+export const QuestionManager = ({ questions, onUpdate }: QuestionManagerProps) => {
   const {
     editing,
     isCreating,

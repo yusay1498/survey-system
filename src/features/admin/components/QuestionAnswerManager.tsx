@@ -1,8 +1,7 @@
 "use client";
 
-import { QuestionAnswer, QuestionAnswerCondition } from "@/entities/questionAnswer";
-import { Question } from "@/entities/question";
-import type { QuestionAnswerFormData } from "@/features/admin";
+import { QuestionAnswer } from "@/entities/questionAnswer";
+import type { QuestionAnswerFormData, QuestionAnswerManagerProps } from "@/features/admin";
 import {
   createQuestionAnswer,
   updateQuestionAnswer,
@@ -19,12 +18,6 @@ import {
   ERROR_MESSAGES,
 } from "@/lib/constants";
 
-type Props = {
-  questionAnswers: QuestionAnswer[];
-  questions: Question[];
-  onUpdate: () => void;
-};
-
 const createInitialFormData = (): QuestionAnswerFormData => ({
   questionId: "",
   name: "",
@@ -34,7 +27,7 @@ const createInitialFormData = (): QuestionAnswerFormData => ({
   order: 0,
 });
 
-export const QuestionAnswerManager = ({ questionAnswers, questions, onUpdate }: Props) => {
+export const QuestionAnswerManager = ({ questionAnswers, questions, onUpdate }: QuestionAnswerManagerProps) => {
   const {
     editing,
     isCreating,

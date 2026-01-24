@@ -1,12 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import type { NameInputProps } from "@/features/auth";
 
-type Props = {
-  onSubmit: (name: string) => void;
-};
-
-export const NameInput = ({ onSubmit }: Props) => {
+export const NameInput = ({ onSubmit }: NameInputProps) => {
   const [name, setName] = useState("");
 
   return (

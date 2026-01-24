@@ -1,13 +1,9 @@
 "use client";
 
-import { QuestionAnswer } from "@/entities/questionAnswer";
 import { GradientCard } from "@/components/ui";
+import type { QuestionPersonalizedAnswerProps } from "@/features/survey";
 
-type Props = {
-  questionAnswer: QuestionAnswer;
-};
-
-export const QuestionPersonalizedAnswer = ({ questionAnswer }: Props) => {
+export const QuestionPersonalizedAnswer = ({ questionAnswer }: QuestionPersonalizedAnswerProps) => {
   return (
     <GradientCard variant="gradient-blue" className="p-4">
       <h3 className="text-xl font-bold mb-2">{questionAnswer.name}</h3>

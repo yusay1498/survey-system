@@ -5,14 +5,11 @@ import { SurveyForm } from "@/features/survey/components/SurveyForm";
 import { saveUser } from "../api/saveUser";
 import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
 import { LoadingScreen } from "@/components/ui";
+import type { UserSurveyFlowProps } from "@/features/auth";
 
-type Props = {
-  userId: string;
-};
-
-export const UserSurveyFlow = ({ userId }: Props) => {
+export const UserSurveyFlow = ({ userId }: UserSurveyFlowProps) => {
   // useLocalStorageを使用してuserNameを永続化
-  const [userName, setUserName, _clearUserName, isLoading] = useLocalStorage<string | null>(
+  const [userName, setUserName, , isLoading] = useLocalStorage<string | null>(
     `user_name_${userId}`,
     null
   );
@@ -41,7 +38,7 @@ export const UserSurveyFlow = ({ userId }: Props) => {
 
   return (
     <main className="p-6">
-      <SurveyForm userId={userId} userName={userName} />
+      <SurveyForm key={userId} userId={userId} userName={userName} />
     </main>
   );
 };

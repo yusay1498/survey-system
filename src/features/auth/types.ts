@@ -35,7 +35,6 @@ export type NameInputProps = {
  */
 export type UserSurveyFlowProps = {
   userId: string;
-  onLogout: () => void;
 };
 
 /**
