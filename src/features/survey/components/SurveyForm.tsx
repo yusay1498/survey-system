@@ -18,7 +18,7 @@ import {
   findMatchingQuestionAnswer,
 } from "@/features/survey";
 import { handleError, confirmAction } from "@/utils";
-import { CONFIRMATION_MESSAGES, ERROR_MESSAGES } from "@/lib/constants";
+import { CONFIRMATION_MESSAGES, ERROR_MESSAGES, BASE_PATH } from "@/lib/constants";
 
 type Props = {
   userId: string;
@@ -373,7 +373,7 @@ export const SurveyForm = ({ userId, userName }: Props) => {
               // 進捗をクリア
               clearProgress();
               // ページをリロードして初期画面に戻る
-              window.location.href = '/';
+              window.location.href = BASE_PATH + '/';
             }}
           >
             ホームに戻る

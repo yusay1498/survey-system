@@ -6,6 +6,7 @@ import { UnauthorizedAccess } from "@/features/admin/components/UnauthorizedAcce
 import { AdminDashboard } from "@/features/admin/components/AdminDashboard";
 import { signOut } from "@/features/auth/api/signOut";
 import { LoadingScreen } from "@/components/ui";
+import { BASE_PATH } from "@/lib/constants";
 import { useEffect, useState } from "react";
 
 export default function AdminPage() {
@@ -29,11 +30,11 @@ export default function AdminPage() {
 
   const handleLogout = async () => {
     await signOut();
-    window.location.href = "/";
+    window.location.href = BASE_PATH + "/";
   };
 
   const handleBackToHome = () => {
-    window.location.href = "/";
+    window.location.href = BASE_PATH + "/";
   };
 
   if (loading || checking) {

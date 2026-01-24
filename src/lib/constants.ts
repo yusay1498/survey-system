@@ -68,3 +68,9 @@ export const UI_CONSTANTS = {
   DEFAULT_OPTIONS_COUNT: 3,
   MIN_CONDITIONS: 1,
 } as const;
+
+/**
+ * アプリケーションのベースパス
+ * GitHub Pages などにデプロイする場合は NEXT_PUBLIC_BASE_PATH を設定する
+ */
+export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
