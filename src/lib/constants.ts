@@ -71,7 +71,6 @@ export const UI_CONSTANTS = {
 
 /**
  * アプリケーションのベースパス
- * 本番環境ではGitHub Pagesのサブパスを使用
+ * GitHub Pages などにデプロイする場合は NEXT_PUBLIC_BASE_PATH を設定する
  */
-export const BASE_PATH =
-  process.env.NODE_ENV === "production" ? "/survey-system" : "";
+export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
