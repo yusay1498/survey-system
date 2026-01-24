@@ -92,7 +92,6 @@ export const SurveyForm = ({ userId, userName }: SurveyFormProps) => {
 
     // 既に復元済みの場合はスキップ（userIdが変わった時のみ復元）
     if (restoredUserIdRef.current === userId) return;
-    if (restoredUserIdRef.current === userId) return;
 
     try {
       const saved = localStorage.getItem(storageKey);
