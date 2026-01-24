@@ -2,8 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { watchResults } from "../api/watchResults";
+import { getQuestionAnswers } from "../api/getQuestionAnswers";
+import { findMatchingQuestionAnswer } from "../lib/matchQuestionAnswer";
+import { QuestionPersonalizedAnswer } from "./QuestionPersonalizedAnswer";
 import { Answer } from "@/entities/answer";
 import { Question } from "@/entities/question";
+import { QuestionAnswer } from "@/entities/questionAnswer";
 
 type Props = {
   questions: Question[];
@@ -11,10 +15,34 @@ type Props = {
 
 export const ResultList = ({ questions }: Props) => {
   const [answers, setAnswers] = useState<Answer[]>([]);
+  const [questionAnswers, setQuestionAnswers] = useState<QuestionAnswer[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = watchResults(setAnswers);
     return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    
+    getQuestionAnswers()
+      .then((data) => {
+        if (mounted) {
+          setQuestionAnswers(data);
+          setLoading(false);
+        }
+      })
+      .catch((error) => {
+        console.error("Failed to load question answers:", error);
+        if (mounted) {
+          setLoading(false);
+        }
+      });
+    
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   return (
@@ -33,13 +61,25 @@ export const ResultList = ({ questions }: Props) => {
                 (a) => a.selectedOption === opt
               );
 
+              // この選択肢に対応するパーソナライズな回答を取得
+              const matchedQuestionAnswer = loading
+                ? null
+                : findMatchingQuestionAnswer(q.id, opt, questionAnswers);
+
               return (
-                <div key={opt} className="mb-1">
+                <div key={opt} className="mb-4">
                   <span className="font-medium">
                     {opt}（{picked.length}）
                   </span>
 
-                  <ul className="ml-4 text-sm text-gray-600 dark:text-gray-400">
+                  {/* パーソナライズな回答結果を表示 */}
+                  {matchedQuestionAnswer && (
+                    <div className="mt-2 ml-4">
+                      <QuestionPersonalizedAnswer questionAnswer={matchedQuestionAnswer} />
+                    </div>
+                  )}
+
+                  <ul className="ml-4 text-sm text-gray-600 dark:text-gray-400 mt-2">
                     {picked.map((p) => (
                       <li key={p.id}>・{p.userName}</li>
                     ))}
