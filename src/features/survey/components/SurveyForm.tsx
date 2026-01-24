@@ -259,9 +259,8 @@ export const SurveyForm = ({ userId, userName }: Props) => {
           </div>
 
           {submitting && (
-            <div className="mt-4 flex items-center justify-center gap-2">
+            <div className="mt-4 flex items-center justify-center">
               <Spinner size="sm" label="送信中..." />
-              <p className="text-gray-600 dark:text-gray-400">送信中...</p>
             </div>
           )}
         </div>
