@@ -13,8 +13,8 @@
 ### 1. リポジトリのクローン
 
 ```bash
-git clone https://github.com/yusay1498/my-pages.git
-cd my-pages
+git clone https://github.com/yusay1498/survey-system.git
+cd survey-system
 ```
 
 ### 2. 依存関係のインストール
@@ -119,7 +119,7 @@ firebase deploy
 ## 📂 プロジェクト構造
 
 ```
-my-pages/
+survey-system/
 ├── src/
 │   ├── app/              # Next.js App Router ページ
 │   ├── features/         # 機能ごとのコンポーネントとロジック
