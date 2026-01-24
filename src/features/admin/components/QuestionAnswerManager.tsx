@@ -1,6 +1,6 @@
 "use client";
 
-import { QuestionAnswer, QuestionAnswerCondition } from "@/entities/questionAnswer";
+import { QuestionAnswer } from "@/entities/questionAnswer";
 import { Question } from "@/entities/question";
 import type { QuestionAnswerFormData } from "@/features/admin";
 import {

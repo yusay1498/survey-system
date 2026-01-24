@@ -47,6 +47,7 @@ export const SurveyForm = ({ userId, userName }: Props) => {
   const [completed, setCompleted] = useState(false);
   const [focusedOptionIndex, setFocusedOptionIndex] = useState(0);
   const optionRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const restoredUserIdRef = useRef<string | null>(null);
   const [userAnswers, setUserAnswers] = useState<Answer[]>([]);
   const [resultPatterns, setResultPatterns] = useState<ResultPattern[]>([]);
   const [matchedPattern, setMatchedPattern] = useState<ResultPattern | null>(null);
@@ -79,18 +80,6 @@ export const SurveyForm = ({ userId, userName }: Props) => {
     }
   }, [storageKey, userNameStorageKey]);
 
-  // userId が変更されたら状態をリセット
-  useEffect(() => {
-    setCurrentQuestionIndex(0);
-    setSelectedOption(null);
-    setShowResults(false);
-    setCompleted(false);
-    setUserAnswers([]);
-    setMatchedPattern(null);
-    setCurrentQuestionAnswer(null);
-    setFocusedOptionIndex(0);
-  }, [userId]);
-
   // データ読み込み
   useEffect(() => {
     Promise.all([
@@ -109,16 +98,23 @@ export const SurveyForm = ({ userId, userName }: Props) => {
         setLoadError(true);
         setLoading(false);
       });
-  }, [userId]);
+  }, []);
 
   // 進捗復元（データ読み込み後、クライアントサイドのみで実行）
   useEffect(() => {
     // SSRでは実行しない（localStorageはクライアントのみ）
-    if (typeof window === 'undefined' || questions.length === 0) return;
+    if (typeof window === 'undefined' || questions.length === 0 || loading) return;
+
+    // 既に復元済みの場合はスキップ（userIdが変わった時のみ復元）
+    if (restoredUserIdRef.current === userId) return;
+    if (restoredUserIdRef.current === userId) return;
 
     try {
       const saved = localStorage.getItem(storageKey);
-      if (!saved) return;
+      if (!saved) {
+        restoredUserIdRef.current = userId;
+        return;
+      }
 
       const savedProgress = JSON.parse(saved) as SurveyProgress;
 
@@ -132,6 +128,7 @@ export const SurveyForm = ({ userId, userName }: Props) => {
 
       if (!isIndexInRange) {
         console.warn("Invalid currentQuestionIndex in saved progress");
+        restoredUserIdRef.current = userId;
         return;
       }
 
@@ -139,7 +136,7 @@ export const SurveyForm = ({ userId, userName }: Props) => {
       const rawUserAnswers = Array.isArray(savedProgress.userAnswers)
         ? savedProgress.userAnswers
         : [];
-      const hasValidUserAnswers = rawUserAnswers.every((answer: any) => {
+      const hasValidUserAnswers = rawUserAnswers.every((answer: Answer) => {
         return (
           answer &&
           typeof answer === "object" &&
@@ -152,10 +149,12 @@ export const SurveyForm = ({ userId, userName }: Props) => {
 
       if (!hasValidUserAnswers) {
         console.warn("Invalid userAnswers in saved progress");
+        restoredUserIdRef.current = userId;
         return;
       }
 
-      // 進捗を復元
+      // 進捗を復元（localStorage同期のため、この場所でのsetStateは適切）
+      /* eslint-disable react-hooks/set-state-in-effect */
       setCurrentQuestionIndex(restoredIndex);
       setShowResults(!!savedProgress.showResults);
       setCompleted(!!savedProgress.completed);
@@ -185,10 +184,13 @@ export const SurveyForm = ({ userId, userName }: Props) => {
           setCurrentQuestionAnswer(questionAnswer);
         }
       }
+      /* eslint-enable react-hooks/set-state-in-effect */
+
+      restoredUserIdRef.current = userId;
     } catch (error) {
       console.error("Failed to restore progress:", error);
     }
-  }, [questions, resultPatterns, questionAnswers, storageKey]);
+  }, [questions, resultPatterns, questionAnswers, storageKey, userId, loading]);
 
   const handleOptionSelect = async (option: string) => {
     // Prevent multiple simultaneous submissions
