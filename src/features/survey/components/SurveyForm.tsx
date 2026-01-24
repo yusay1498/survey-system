@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { Question } from "@/entities/question";
 import { Answer } from "@/entities/answer";
 import { ResultPattern } from "@/entities/resultPattern";
@@ -25,6 +25,17 @@ type Props = {
   userName: string;
 };
 
+// LocalStorageに保存する進捗データの型
+type SurveyProgress = {
+  currentQuestionIndex: number;
+  showResults: boolean;
+  completed: boolean;
+  userAnswers: Answer[];
+  selectedOption: string | null;
+  matchedPatternId: string | null;
+  currentQuestionAnswerId: string | null;
+};
+
 export const SurveyForm = ({ userId, userName }: Props) => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -42,6 +53,43 @@ export const SurveyForm = ({ userId, userName }: Props) => {
   const [questionAnswers, setQuestionAnswers] = useState<QuestionAnswer[]>([]);
   const [currentQuestionAnswer, setCurrentQuestionAnswer] = useState<QuestionAnswer | null>(null);
 
+  // LocalStorageのキー
+  const storageKey = `survey_progress_${userId}`;
+
+  // 進捗を保存
+  const saveProgress = useCallback((progress: Partial<SurveyProgress>) => {
+    try {
+      const currentProgress = localStorage.getItem(storageKey);
+      const existingProgress = currentProgress ? JSON.parse(currentProgress) : {};
+      const updatedProgress = { ...existingProgress, ...progress };
+      localStorage.setItem(storageKey, JSON.stringify(updatedProgress));
+    } catch (error) {
+      console.error("Failed to save progress:", error);
+    }
+  }, [storageKey]);
+
+  // 進捗をクリア
+  const clearProgress = useCallback(() => {
+    try {
+      localStorage.removeItem(storageKey);
+    } catch (error) {
+      console.error("Failed to clear progress:", error);
+    }
+  }, [storageKey]);
+
+  // userId が変更されたら状態をリセット
+  useEffect(() => {
+    setCurrentQuestionIndex(0);
+    setSelectedOption(null);
+    setShowResults(false);
+    setCompleted(false);
+    setUserAnswers([]);
+    setMatchedPattern(null);
+    setCurrentQuestionAnswer(null);
+    setFocusedOptionIndex(0);
+  }, [userId]);
+
+  // データ読み込み
   useEffect(() => {
     Promise.all([
       getQuestions(),
@@ -59,7 +107,86 @@ export const SurveyForm = ({ userId, userName }: Props) => {
         setLoadError(true);
         setLoading(false);
       });
-  }, []);
+  }, [userId]);
+
+  // 進捗復元（データ読み込み後、クライアントサイドのみで実行）
+  useEffect(() => {
+    // SSRでは実行しない（localStorageはクライアントのみ）
+    if (typeof window === 'undefined' || questions.length === 0) return;
+
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (!saved) return;
+
+      const savedProgress = JSON.parse(saved) as SurveyProgress;
+
+      // バリデーション: currentQuestionIndex が範囲内か
+      const restoredIndex =
+        typeof savedProgress.currentQuestionIndex === "number"
+          ? savedProgress.currentQuestionIndex
+          : 0;
+      const isIndexInRange =
+        restoredIndex >= 0 && restoredIndex < questions.length;
+
+      if (!isIndexInRange) {
+        console.warn("Invalid currentQuestionIndex in saved progress");
+        return;
+      }
+
+      // バリデーション: userAnswers が配列で、各要素が必須フィールドを持つか
+      const rawUserAnswers = Array.isArray(savedProgress.userAnswers)
+        ? savedProgress.userAnswers
+        : [];
+      const hasValidUserAnswers = rawUserAnswers.every((answer: any) => {
+        return (
+          answer &&
+          typeof answer === "object" &&
+          "userId" in answer &&
+          "userName" in answer &&
+          "questionId" in answer &&
+          "selectedOption" in answer
+        );
+      });
+
+      if (!hasValidUserAnswers) {
+        console.warn("Invalid userAnswers in saved progress");
+        return;
+      }
+
+      // 進捗を復元
+      setCurrentQuestionIndex(restoredIndex);
+      setShowResults(!!savedProgress.showResults);
+      setCompleted(!!savedProgress.completed);
+      setUserAnswers(rawUserAnswers);
+      setSelectedOption(
+        typeof savedProgress.selectedOption === "string"
+          ? savedProgress.selectedOption
+          : null
+      );
+
+      // マッチしたパターンを復元（存在する場合のみ）
+      if (savedProgress.completed && savedProgress.matchedPatternId != null) {
+        const pattern = resultPatterns.find(
+          (p) => p.id === savedProgress.matchedPatternId
+        );
+        if (pattern) {
+          setMatchedPattern(pattern);
+        }
+      }
+
+      // currentQuestionAnswer を復元
+      if (savedProgress.showResults && savedProgress.currentQuestionAnswerId != null) {
+        const questionAnswer = questionAnswers.find(
+          (qa) => qa.id === savedProgress.currentQuestionAnswerId
+        );
+        if (questionAnswer) {
+          setCurrentQuestionAnswer(questionAnswer);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to restore progress:", error);
+    }
+  }, [questions, resultPatterns, questionAnswers, storageKey]);
 
   const handleOptionSelect = async (option: string) => {
     // Prevent multiple simultaneous submissions
@@ -87,7 +214,8 @@ export const SurveyForm = ({ userId, userName }: Props) => {
       await submitAnswer(newAnswer);
 
       // Store answer in state to avoid race condition when matching patterns
-      setUserAnswers(prev => [...prev, { ...newAnswer, id: `${userId}-${currentQuestion.id}` }]);
+      const updatedAnswers = [...userAnswers, { ...newAnswer, id: `${userId}-${currentQuestion.id}` }];
+      setUserAnswers(updatedAnswers);
 
       // 質問ごとのパーソナライズな回答を検索
       const matchedQuestionAnswer = findMatchingQuestionAnswer(
@@ -99,6 +227,16 @@ export const SurveyForm = ({ userId, userName }: Props) => {
 
       setSubmitting(false);
       setShowResults(true);
+
+      // 進捗を保存
+      saveProgress({
+        currentQuestionIndex,
+        showResults: true,
+        selectedOption: option,
+        userAnswers: updatedAnswers,
+        completed: false,
+        currentQuestionAnswerId: matchedQuestionAnswer?.id || null,
+      });
     } catch (error) {
       setSubmitting(false);
       setSelectedOption(null); // Reset selection to allow retry
@@ -108,24 +246,46 @@ export const SurveyForm = ({ userId, userName }: Props) => {
 
   const handleNextQuestion = async () => {
     if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      const nextIndex = currentQuestionIndex + 1;
+      setCurrentQuestionIndex(nextIndex);
       setSelectedOption(null);
       setShowResults(false);
       setCurrentQuestionAnswer(null); // リセット
       setFocusedOptionIndex(0); // Reset focus for next question
       optionRefs.current = []; // Clear refs for next question
+
+      // 進捗を保存
+      saveProgress({
+        currentQuestionIndex: nextIndex,
+        showResults: false,
+        selectedOption: null,
+        userAnswers,
+        completed: false,
+        currentQuestionAnswerId: null,
+      });
     } else {
       // All questions completed - calculate result from locally stored answers
+      let pattern: ResultPattern | null = null;
       try {
-        const pattern = findMatchingPattern(userAnswers, resultPatterns);
+        pattern = findMatchingPattern(userAnswers, resultPatterns);
         setMatchedPattern(pattern);
-        setCompleted(true);
       } catch (error) {
         console.error("Failed to calculate result pattern:", error);
         // Still show completion screen even if pattern matching fails
-        // User will see the default completion message
-        setCompleted(true);
       }
+      
+      setCompleted(true);
+
+      // 完了状態を保存
+      saveProgress({
+        currentQuestionIndex,
+        showResults: false,
+        selectedOption: null,
+        userAnswers,
+        completed: true,
+        matchedPatternId: pattern?.id || null,
+        currentQuestionAnswerId: null,
+      });
     }
   };
 
@@ -204,6 +364,20 @@ export const SurveyForm = ({ userId, userName }: Props) => {
             全体の集計結果
           </h3>
           <ResultList questions={questions} />
+        </div>
+
+        <div className="mt-6 flex justify-center">
+          <button
+            className="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-blue-700 transition-colors dark:bg-blue-500 dark:hover:bg-blue-600"
+            onClick={() => {
+              // 進捗をクリア
+              clearProgress();
+              // ページをリロードして初期画面に戻る
+              window.location.href = '/';
+            }}
+          >
+            ホームに戻る
+          </button>
         </div>
       </div>
     );
