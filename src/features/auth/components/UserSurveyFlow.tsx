@@ -4,6 +4,7 @@ import { NameInput } from "./NameInput";
 import { SurveyForm } from "@/features/survey/components/SurveyForm";
 import { saveUser } from "../api/saveUser";
 import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
+import { LoadingScreen } from "@/components/ui";
 
 type Props = {
   userId: string;
@@ -11,10 +12,15 @@ type Props = {
 
 export const UserSurveyFlow = ({ userId }: Props) => {
   // useLocalStorageを使用してuserNameを永続化
-  const [userName, setUserName] = useLocalStorage<string | null>(
+  const [userName, setUserName, , isLoading] = useLocalStorage<string | null>(
     `user_name_${userId}`,
     null
   );
+
+  // localStorageから読み込み中はローディング画面を表示
+  if (isLoading) {
+    return <LoadingScreen message="読み込み中..." />;
+  }
 
   if (!userName) {
     return (
