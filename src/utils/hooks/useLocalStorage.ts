@@ -6,18 +6,21 @@ import { useState, useEffect, useCallback } from "react";
  * @template T - 保存するデータの型
  * @param key - localStorageのキー
  * @param initialValue - 初期値
- * @returns [値, 値を設定する関数, 値をクリアする関数]
+ * @returns [値, 値を設定する関数, 値をクリアする関数, 読み込み中かどうか]
  */
 export function useLocalStorage<T>(
   key: string,
   initialValue: T
-): [T, (value: T | ((prev: T) => T)) => void, () => void] {
+): [T, (value: T | ((prev: T) => T)) => void, () => void, boolean] {
   const [storedValue, setStoredValue] = useState<T>(initialValue);
   const [isClient, setIsClient] = useState(false);
+  // SSR時はローディング状態にしない（クライアントでのみローディング）
+  const [isLoading, setIsLoading] = useState(typeof window !== 'undefined');
 
   // クライアントサイドでのみlocalStorageから値を読み込む
   useEffect(() => {
     setIsClient(true);
+    setIsLoading(true);
     try {
       const item = window.localStorage.getItem(key);
       if (item) {
@@ -25,6 +28,8 @@ export function useLocalStorage<T>(
       }
     } catch (error) {
       console.error(`Error loading localStorage key "${key}":`, error);
+    } finally {
+      setIsLoading(false);
     }
   }, [key]);
 
@@ -59,5 +64,5 @@ export function useLocalStorage<T>(
     }
   }, [key, initialValue, isClient]);
 
-  return [storedValue, setValue, clearValue];
+  return [storedValue, setValue, clearValue, isLoading];
 }

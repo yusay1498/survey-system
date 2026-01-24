@@ -1,16 +1,26 @@
 "use client";
 
-import { useState } from "react";
 import { NameInput } from "./NameInput";
 import { SurveyForm } from "@/features/survey/components/SurveyForm";
 import { saveUser } from "../api/saveUser";
+import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
+import { LoadingScreen } from "@/components/ui";
 
 type Props = {
   userId: string;
 };
 
 export const UserSurveyFlow = ({ userId }: Props) => {
-  const [userName, setUserName] = useState<string | null>(null);
+  // useLocalStorageを使用してuserNameを永続化
+  const [userName, setUserName, _clearUserName, isLoading] = useLocalStorage<string | null>(
+    `user_name_${userId}`,
+    null
+  );
+
+  // localStorageから読み込み中はローディング画面を表示
+  if (isLoading) {
+    return <LoadingScreen message="読み込み中..." />;
+  }
 
   if (!userName) {
     return (

@@ -55,6 +55,7 @@ export const SurveyForm = ({ userId, userName }: Props) => {
 
   // LocalStorageのキー
   const storageKey = `survey_progress_${userId}`;
+  const userNameStorageKey = `user_name_${userId}`;
 
   // 進捗を保存
   const saveProgress = useCallback((progress: Partial<SurveyProgress>) => {
@@ -72,10 +73,11 @@ export const SurveyForm = ({ userId, userName }: Props) => {
   const clearProgress = useCallback(() => {
     try {
       localStorage.removeItem(storageKey);
+      localStorage.removeItem(userNameStorageKey);
     } catch (error) {
       console.error("Failed to clear progress:", error);
     }
-  }, [storageKey]);
+  }, [storageKey, userNameStorageKey]);
 
   // userId が変更されたら状態をリセット
   useEffect(() => {
