@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { ResultPattern, ResultCondition } from "@/entities/resultPattern";
 import { Question } from "@/entities/question";
 import {
@@ -12,6 +11,7 @@ import {
   validateResultPatternForm,
   handleError,
   confirmAction,
+  useCRUDManager,
 } from "@/utils";
 import {
   CONFIRMATION_MESSAGES,
@@ -24,7 +24,7 @@ type Props = {
   onUpdate: () => void;
 };
 
-type FormData = {
+type ResultPatternFormData = {
   name: string;
   message: string;
   description: string;
@@ -33,7 +33,7 @@ type FormData = {
   order: number;
 };
 
-const createInitialFormData = (): FormData => ({
+const createInitialFormData = (): ResultPatternFormData => ({
   name: "",
   message: "",
   description: "",
@@ -43,15 +43,15 @@ const createInitialFormData = (): FormData => ({
 });
 
 export const ResultPatternManager = ({ patterns, questions, onUpdate }: Props) => {
-  const [editing, setEditing] = useState<ResultPattern | null>(null);
-  const [isCreating, setIsCreating] = useState(false);
-  const [formData, setFormData] = useState<FormData>(createInitialFormData());
-
-  const resetForm = () => {
-    setFormData(createInitialFormData());
-    setEditing(null);
-    setIsCreating(false);
-  };
+  const {
+    editing,
+    isCreating,
+    formData,
+    setFormData,
+    resetForm,
+    startEdit,
+    startCreate,
+  } = useCRUDManager<ResultPattern, ResultPatternFormData>(createInitialFormData);
 
   const validateForm = (): ResultCondition[] | null => {
     const nameValidationError = validateResultPatternForm(
@@ -65,20 +65,20 @@ export const ResultPatternManager = ({ patterns, questions, onUpdate }: Props) =
       return null;
     }
 
-    const validConditions = formData.conditions.filter((c) => {
+    const validConditions = formData.conditions.filter((condition) => {
       // 基本的なチェック: questionIdと selectedOptionが存在するか
-      if (!c.questionId || !c.selectedOption.trim()) {
+      if (!condition.questionId || !condition.selectedOption.trim()) {
         return false;
       }
       
       // questionIdが現在の質問リストに存在するかチェック
-      const question = questions.find((q) => q.id === c.questionId);
+      const question = questions.find((question) => question.id === condition.questionId);
       if (!question) {
         return false;
       }
       
       // selectedOptionが質問の選択肢に存在するかチェック
-      if (!question.options.includes(c.selectedOption)) {
+      if (!question.options.includes(condition.selectedOption)) {
         return false;
       }
       
@@ -167,26 +167,19 @@ export const ResultPatternManager = ({ patterns, questions, onUpdate }: Props) =
     }
   };
 
-  const startEdit = (pattern: ResultPattern) => {
-    setEditing(pattern);
-    setFormData({
+  const handleStartEdit = (pattern: ResultPattern) => {
+    startEdit(pattern, (pattern) => ({
       name: pattern.name,
       message: pattern.message,
       description: pattern.description || "",
       conditions: [...pattern.conditions],
       priority: pattern.priority,
       order: pattern.order,
-    });
-    setIsCreating(false);
+    }));
   };
 
-  const startCreate = () => {
-    setIsCreating(true);
-    setEditing(null);
-    setFormData({
-      name: "",
-      message: "",
-      description: "",
+  const handleStartCreate = () => {
+    startCreate({
       conditions: [{ questionId: "", selectedOption: "" }],
       priority: 10,
       order: patterns.length,
@@ -201,7 +194,7 @@ export const ResultPatternManager = ({ patterns, questions, onUpdate }: Props) =
   };
 
   const removeCondition = (index: number) => {
-    const newConditions = formData.conditions.filter((_, i) => i !== index);
+    const newConditions = formData.conditions.filter((_, conditionIndex) => conditionIndex !== index);
     setFormData({ ...formData, conditions: newConditions });
   };
 
@@ -226,7 +219,7 @@ export const ResultPatternManager = ({ patterns, questions, onUpdate }: Props) =
 
   // Get options for a specific question
   const getQuestionOptions = (questionId: string): string[] => {
-    const question = questions.find((q) => q.id === questionId);
+    const question = questions.find((question) => question.id === questionId);
     return question ? question.options : [];
   };
 
@@ -236,7 +229,7 @@ export const ResultPatternManager = ({ patterns, questions, onUpdate }: Props) =
         <h2 className="text-xl font-bold">結果パターン管理</h2>
         <button
           className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600"
-          onClick={startCreate}
+          onClick={handleStartCreate}
         >
           新規パターン作成
         </button>
@@ -273,8 +266,8 @@ export const ResultPatternManager = ({ patterns, questions, onUpdate }: Props) =
                   <div className="text-xs text-gray-500 dark:text-gray-500">
                     <p className="font-semibold mb-1">条件:</p>
                     <ul className="ml-4 space-y-1">
-                      {pattern.conditions.map((condition, idx) => (
-                        <li key={idx}>
+                      {pattern.conditions.map((condition, conditionIndex) => (
+                        <li key={conditionIndex}>
                           ・{getQuestionText(condition.questionId)} → 「{condition.selectedOption}」
                         </li>
                       ))}
@@ -284,7 +277,7 @@ export const ResultPatternManager = ({ patterns, questions, onUpdate }: Props) =
                 <div className="flex gap-2">
                   <button
                     className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
-                    onClick={() => startEdit(pattern)}
+                    onClick={() => handleStartEdit(pattern)}
                   >
                     編集
                   </button>

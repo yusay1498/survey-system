@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { QuestionAnswer, QuestionAnswerCondition } from "@/entities/questionAnswer";
 import { Question } from "@/entities/question";
 import {
@@ -12,6 +11,7 @@ import {
   validateQuestionAnswerForm,
   handleError,
   confirmAction,
+  useCRUDManager,
 } from "@/utils";
 import {
   CONFIRMATION_MESSAGES,
@@ -24,7 +24,7 @@ type Props = {
   onUpdate: () => void;
 };
 
-type FormData = {
+type QuestionAnswerFormData = {
   questionId: string;
   name: string;
   message: string;
@@ -33,7 +33,7 @@ type FormData = {
   order: number;
 };
 
-const createInitialFormData = (): FormData => ({
+const createInitialFormData = (): QuestionAnswerFormData => ({
   questionId: "",
   name: "",
   message: "",
@@ -43,15 +43,15 @@ const createInitialFormData = (): FormData => ({
 });
 
 export const QuestionAnswerManager = ({ questionAnswers, questions, onUpdate }: Props) => {
-  const [editing, setEditing] = useState<QuestionAnswer | null>(null);
-  const [isCreating, setIsCreating] = useState(false);
-  const [formData, setFormData] = useState<FormData>(createInitialFormData());
-
-  const resetForm = () => {
-    setFormData(createInitialFormData());
-    setEditing(null);
-    setIsCreating(false);
-  };
+  const {
+    editing,
+    isCreating,
+    formData,
+    setFormData,
+    resetForm,
+    startEdit,
+    startCreate,
+  } = useCRUDManager<QuestionAnswer, QuestionAnswerFormData>(createInitialFormData);
 
   const validateForm = (): boolean => {
     const validationError = validateQuestionAnswerForm(
@@ -136,38 +136,31 @@ export const QuestionAnswerManager = ({ questionAnswers, questions, onUpdate }: 
     }
   };
 
-  const startEdit = (questionAnswer: QuestionAnswer) => {
-    setEditing(questionAnswer);
-    setFormData({
+  const handleStartEdit = (questionAnswer: QuestionAnswer) => {
+    startEdit(questionAnswer, (questionAnswer) => ({
       questionId: questionAnswer.questionId,
       name: questionAnswer.name,
       message: questionAnswer.message,
       description: questionAnswer.description || "",
       condition: { ...questionAnswer.condition },
       order: questionAnswer.order,
-    });
-    setIsCreating(false);
+    }));
   };
 
-  const startCreate = () => {
-    setIsCreating(true);
-    setEditing(null);
-    setFormData({
-      ...createInitialFormData(),
-      order: questionAnswers.length,
-    });
+  const handleStartCreate = () => {
+    startCreate({ order: questionAnswers.length });
   };
 
   // 質問IDから選択肢リストを取得
   const getQuestionOptions = (questionId: string): string[] => {
-    const question = questions.find((q) => q.id === questionId);
+    const question = questions.find((question) => question.id === questionId);
     return question ? question.options : [];
   };
 
   // 質問IDごとにグループ化
   const groupedByQuestion = questions.map((question) => ({
     question,
-    answers: questionAnswers.filter((qa) => qa.questionId === question.id),
+    answers: questionAnswers.filter((questionAnswer) => questionAnswer.questionId === question.id),
   }));
 
   return (
@@ -176,7 +169,7 @@ export const QuestionAnswerManager = ({ questionAnswers, questions, onUpdate }: 
         <h2 className="text-xl font-bold">質問回答パターン管理</h2>
         <button
           className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600"
-          onClick={startCreate}
+          onClick={handleStartCreate}
         >
           新規パターン作成
         </button>
@@ -209,30 +202,30 @@ export const QuestionAnswerManager = ({ questionAnswers, questions, onUpdate }: 
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
-                            <span className="font-bold">{qa.name}</span>
+                            <span className="font-bold">{questionAnswer.name}</span>
                             <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded dark:bg-blue-900 dark:text-blue-200">
-                              選択肢: {qa.condition.selectedOption}
+                              選択肢: {questionAnswer.condition.selectedOption}
                             </span>
                           </div>
                           <p className="text-sm text-gray-700 mb-1 dark:text-gray-300">
-                            {qa.message}
+                            {questionAnswer.message}
                           </p>
-                          {qa.description && (
+                          {questionAnswer.description && (
                             <p className="text-sm text-gray-600 dark:text-gray-400">
-                              {qa.description}
+                              {questionAnswer.description}
                             </p>
                           )}
                         </div>
                         <div className="flex gap-2">
                           <button
                             className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
-                            onClick={() => startEdit(qa)}
+                            onClick={() => handleStartEdit(questionAnswer)}
                           >
                             編集
                           </button>
                           <button
                             className="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600"
-                            onClick={() => handleDelete(qa.id)}
+                            onClick={() => handleDelete(questionAnswer.id)}
                           >
                             削除
                           </button>
