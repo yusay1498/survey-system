@@ -23,6 +23,12 @@ export function findMatchingQuestionAnswer(
   }
 
   // orderの小さい順に並べて最初のものを返す
-  matchingAnswers.sort((a, b) => a.order - b.order);
+  // 同じorderの場合はidでソート（より決定論的な振る舞い）
+  matchingAnswers.sort((a, b) => {
+    if (a.order !== b.order) {
+      return a.order - b.order;
+    }
+    return a.id.localeCompare(b.id);
+  });
   return matchingAnswers[0];
 }

@@ -4,6 +4,7 @@ import { Answer } from "@/entities/answer";
 import { ResultPattern } from "@/entities/resultPattern";
 import { QuestionAnswer } from "@/entities/questionAnswer";
 import { Question } from "@/entities/question";
+import { findMatchingQuestionAnswer } from "../lib/matchQuestionAnswer";
 
 type Props = {
   userAnswers: Answer[];
@@ -17,10 +18,10 @@ export const PersonalityResult = ({ userAnswers, pattern, questionAnswers, quest
   const getAnswerDetails = () => {
     return userAnswers.map((answer) => {
       const question = questions.find((q) => q.id === answer.questionId);
-      const matchedQuestionAnswer = questionAnswers.find(
-        (qa) =>
-          qa.questionId === answer.questionId &&
-          qa.condition.selectedOption === answer.selectedOption
+      const matchedQuestionAnswer = findMatchingQuestionAnswer(
+        answer.questionId,
+        answer.selectedOption,
+        questionAnswers
       );
       
       return {
