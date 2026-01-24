@@ -17,3 +17,15 @@ export { QuestionManager } from "./components/QuestionManager";
 export { QuestionAnswerManager } from "./components/QuestionAnswerManager";
 export { ResultPatternManager } from "./components/ResultPatternManager";
 export { UnauthorizedAccess } from "./components/UnauthorizedAccess";
+
+// Admin Types exports
+export type {
+  AdminDashboardProps,
+  AdminHeaderProps,
+  QuestionManagerProps,
+  QuestionAnswerManagerProps,
+  ResultPatternManagerProps,
+  QuestionFormData,
+  QuestionAnswerFormData,
+  ResultPatternFormData,
+} from "./types";

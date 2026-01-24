@@ -13,3 +13,13 @@ export { UserSurveyFlow } from "./components/UserSurveyFlow";
 
 // Auth Hooks exports
 export { useAuth } from "./hooks/useAuth";
+
+// Auth Types exports
+export type {
+  LoginSelectionProps,
+  AdminLoginFormProps,
+  AnonymousLoginButtonProps,
+  NameInputProps,
+  UserSurveyFlowProps,
+  AuthState,
+} from "./types";
