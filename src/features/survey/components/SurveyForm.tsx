@@ -2,9 +2,14 @@
 
 import { useEffect, useState, useRef } from "react";
 import { Question } from "@/entities/question";
+import { Answer } from "@/entities/answer";
+import { ResultPattern } from "@/entities/resultPattern";
 import { ResultList } from "./ResultList";
+import { PersonalityResult } from "./PersonalityResult";
 import { getQuestions } from "../api/getQuestions";
 import { submitAnswer } from "../api/submitAnswer";
+import { getResultPatterns } from "../api/getResultPatterns";
+import { findMatchingPattern } from "../lib/matchResultPattern";
 
 type Props = {
   userId: string;
@@ -17,16 +22,30 @@ export const SurveyForm = ({ userId, userName }: Props) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [showResults, setShowResults] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [completed, setCompleted] = useState(false);
   const [focusedOptionIndex, setFocusedOptionIndex] = useState(0);
   const optionRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const [userAnswers, setUserAnswers] = useState<Answer[]>([]);
+  const [resultPatterns, setResultPatterns] = useState<ResultPattern[]>([]);
+  const [matchedPattern, setMatchedPattern] = useState<ResultPattern | null>(null);
 
   useEffect(() => {
-    getQuestions().then((q) => {
-      setQuestions(q);
-      setLoading(false);
-    });
+    Promise.all([
+      getQuestions(),
+      getResultPatterns()
+    ])
+      .then(([q, patterns]) => {
+        setQuestions(q);
+        setResultPatterns(patterns);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Failed to load survey data:", error);
+        setLoadError(true);
+        setLoading(false);
+      });
   }, []);
 
   const handleOptionSelect = async (option: string) => {
@@ -50,13 +69,18 @@ export const SurveyForm = ({ userId, userName }: Props) => {
     const currentQuestion = questions[currentQuestionIndex];
     
     try {
-      await submitAnswer({
+      const newAnswer: Answer = {
         userId,
         userName,
         questionId: currentQuestion.id,
         selectedOption: option,
         createdAt: new Date(),
-      });
+      };
+
+      await submitAnswer(newAnswer);
+
+      // Store answer in state to avoid race condition when matching patterns
+      setUserAnswers(prev => [...prev, { ...newAnswer, id: `${userId}-${currentQuestion.id}` }]);
 
       setSubmitting(false);
       setShowResults(true);
@@ -68,7 +92,7 @@ export const SurveyForm = ({ userId, userName }: Props) => {
     }
   };
 
-  const handleNextQuestion = () => {
+  const handleNextQuestion = async () => {
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setSelectedOption(null);
@@ -76,7 +100,17 @@ export const SurveyForm = ({ userId, userName }: Props) => {
       setFocusedOptionIndex(0); // Reset focus for next question
       optionRefs.current = []; // Clear refs for next question
     } else {
-      setCompleted(true);
+      // All questions completed - calculate result from locally stored answers
+      try {
+        const pattern = findMatchingPattern(userAnswers, resultPatterns);
+        setMatchedPattern(pattern);
+        setCompleted(true);
+      } catch (error) {
+        console.error("Failed to calculate result pattern:", error);
+        // Still show completion screen even if pattern matching fails
+        // User will see the default completion message
+        setCompleted(true);
+      }
     }
   };
 
@@ -114,6 +148,23 @@ export const SurveyForm = ({ userId, userName }: Props) => {
 
   if (loading) return <p>Loading...</p>;
 
+  // Handle loading error
+  if (loadError) {
+    return (
+      <div className="p-6">
+        <p className="text-red-600 dark:text-red-400 mb-4">
+          アンケートデータの読み込みに失敗しました。
+        </p>
+        <button
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+          onClick={() => window.location.reload()}
+        >
+          再読み込み
+        </button>
+      </div>
+    );
+  }
+
   // Handle empty questions scenario
   if (questions.length === 0) {
     return <p>現在、利用可能な質問がありません。</p>;
@@ -122,7 +173,14 @@ export const SurveyForm = ({ userId, userName }: Props) => {
   if (completed) {
     return (
       <div className="space-y-6">
-        <ResultList questions={questions} />
+        <PersonalityResult userAnswers={userAnswers} pattern={matchedPattern} />
+        
+        <div className="border-t-2 border-gray-300 dark:border-gray-600 pt-6">
+          <h3 className="text-xl font-bold mb-4 text-gray-800 dark:text-gray-200">
+            全体の集計結果
+          </h3>
+          <ResultList questions={questions} />
+        </div>
       </div>
     );
   }
