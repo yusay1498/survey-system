@@ -311,7 +311,7 @@ export const SurveyForm = ({ userId, userName }: Props) => {
         <div className="mt-6 flex justify-center">
           <button
             className="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-blue-700 transition-colors dark:bg-blue-500 dark:hover:bg-blue-600"
-            onClick={async () => {
+            onClick={() => {
               // 進捗をクリア
               clearProgress();
               // ページをリロードして初期画面に戻る
