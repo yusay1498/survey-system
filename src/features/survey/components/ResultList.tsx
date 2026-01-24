@@ -61,11 +61,9 @@ export const ResultList = ({ questions }: Props) => {
               );
 
               // この選択肢に対応するパーソナライズな回答を取得
-              const matchedQuestionAnswer = findMatchingQuestionAnswer(
-                q.id,
-                opt,
-                questionAnswers
-              );
+              const matchedQuestionAnswer = loading
+                ? null
+                : findMatchingQuestionAnswer(q.id, opt, questionAnswers);
 
               return (
                 <div key={opt} className="mb-4">
@@ -75,20 +73,14 @@ export const ResultList = ({ questions }: Props) => {
 
                   {/* パーソナライズな回答結果を表示 */}
                   {matchedQuestionAnswer && (
-                    <div className="mt-2 ml-4 p-3 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/30 dark:to-cyan-900/30 rounded-lg border border-blue-200 dark:border-blue-700">
-                      <div className="text-sm">
-                        <span className="font-semibold text-blue-700 dark:text-blue-300">
-                          {matchedQuestionAnswer.name}
-                        </span>
-                        <p className="text-gray-700 dark:text-gray-300 mt-1">
-                          {matchedQuestionAnswer.message}
+                    <div className="mt-2 ml-4 p-4 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg text-white shadow-md">
+                      <h4 className="text-lg font-bold mb-1">{matchedQuestionAnswer.name}</h4>
+                      <p className="text-sm leading-relaxed">{matchedQuestionAnswer.message}</p>
+                      {matchedQuestionAnswer.description && (
+                        <p className="mt-2 text-xs leading-relaxed opacity-90">
+                          {matchedQuestionAnswer.description}
                         </p>
-                        {matchedQuestionAnswer.description && (
-                          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                            {matchedQuestionAnswer.description}
-                          </p>
-                        )}
-                      </div>
+                      )}
                     </div>
                   )}
 
