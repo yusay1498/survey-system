@@ -3,9 +3,20 @@
 import { useState } from "react";
 import { QuestionAnswer, QuestionAnswerCondition } from "@/entities/questionAnswer";
 import { Question } from "@/entities/question";
-import { createQuestionAnswer } from "../api/createQuestionAnswer";
-import { updateQuestionAnswer } from "../api/updateQuestionAnswer";
-import { deleteQuestionAnswer } from "../api/deleteQuestionAnswer";
+import {
+  createQuestionAnswer,
+  updateQuestionAnswer,
+  deleteQuestionAnswer,
+} from "@/features/admin";
+import {
+  validateQuestionAnswerForm,
+  handleError,
+  confirmAction,
+} from "@/utils";
+import {
+  CONFIRMATION_MESSAGES,
+  ERROR_MESSAGES,
+} from "@/lib/constants";
 
 type Props = {
   questionAnswers: QuestionAnswer[];
@@ -22,62 +33,37 @@ type FormData = {
   order: number;
 };
 
+const createInitialFormData = (): FormData => ({
+  questionId: "",
+  name: "",
+  message: "",
+  description: "",
+  condition: { selectedOption: "" },
+  order: 0,
+});
+
 export const QuestionAnswerManager = ({ questionAnswers, questions, onUpdate }: Props) => {
   const [editing, setEditing] = useState<QuestionAnswer | null>(null);
   const [isCreating, setIsCreating] = useState(false);
-  const [formData, setFormData] = useState<FormData>({
-    questionId: "",
-    name: "",
-    message: "",
-    description: "",
-    condition: { selectedOption: "" },
-    order: 0,
-  });
+  const [formData, setFormData] = useState<FormData>(createInitialFormData());
 
   const resetForm = () => {
-    setFormData({
-      questionId: "",
-      name: "",
-      message: "",
-      description: "",
-      condition: { selectedOption: "" },
-      order: 0,
-    });
+    setFormData(createInitialFormData());
     setEditing(null);
     setIsCreating(false);
   };
 
   const validateForm = (): boolean => {
-    if (!formData.questionId) {
-      alert("質問を選択してください");
-      return false;
-    }
-    
-    if (!formData.name.trim()) {
-      alert("回答パターン名を入力してください");
-      return false;
-    }
-    
-    if (!formData.message.trim()) {
-      alert("メッセージを入力してください");
-      return false;
-    }
+    const validationError = validateQuestionAnswerForm(
+      formData.questionId,
+      formData.name,
+      formData.message,
+      formData.condition.selectedOption,
+      questions
+    );
 
-    if (!formData.condition.selectedOption.trim()) {
-      alert("選択肢を指定してください");
-      return false;
-    }
-
-    // 選択された質問が存在するか確認
-    const question = questions.find((q) => q.id === formData.questionId);
-    if (!question) {
-      alert("選択された質問が見つかりません");
-      return false;
-    }
-
-    // 選択肢が質問のオプションに含まれているか確認
-    if (!question.options.includes(formData.condition.selectedOption)) {
-      alert("選択された選択肢が質問に存在しません");
+    if (validationError) {
+      alert(validationError);
       return false;
     }
 
@@ -100,15 +86,16 @@ export const QuestionAnswerManager = ({ questionAnswers, questions, onUpdate }: 
       resetForm();
       onUpdate();
     } catch (error) {
-      console.error("質問回答パターンの作成に失敗しました:", error);
-      alert("質問回答パターンの作成に失敗しました。もう一度お試しください。");
+      handleError(
+        "質問回答パターンの作成に失敗しました",
+        error,
+        ERROR_MESSAGES.CREATE_QUESTION_ANSWER_FAILED
+      );
     }
   };
 
   const handleUpdate = async () => {
-    if (!editing) {
-      return;
-    }
+    if (!editing) return;
 
     if (!validateForm()) return;
 
@@ -126,20 +113,26 @@ export const QuestionAnswerManager = ({ questionAnswers, questions, onUpdate }: 
       resetForm();
       onUpdate();
     } catch (error) {
-      console.error("質問回答パターンの更新に失敗しました:", error);
-      alert("質問回答パターンの更新に失敗しました。もう一度お試しください。");
+      handleError(
+        "質問回答パターンの更新に失敗しました",
+        error,
+        ERROR_MESSAGES.UPDATE_QUESTION_ANSWER_FAILED
+      );
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("この質問回答パターンを削除しますか？")) return;
+    if (!confirmAction(CONFIRMATION_MESSAGES.DELETE_QUESTION_ANSWER)) return;
 
     try {
       await deleteQuestionAnswer(id);
       onUpdate();
     } catch (error) {
-      console.error("質問回答パターンの削除に失敗しました:", error);
-      alert("質問回答パターンの削除に失敗しました。もう一度お試しください。");
+      handleError(
+        "質問回答パターンの削除に失敗しました",
+        error,
+        ERROR_MESSAGES.DELETE_QUESTION_ANSWER_FAILED
+      );
     }
   };
 
@@ -160,11 +153,7 @@ export const QuestionAnswerManager = ({ questionAnswers, questions, onUpdate }: 
     setIsCreating(true);
     setEditing(null);
     setFormData({
-      questionId: "",
-      name: "",
-      message: "",
-      description: "",
-      condition: { selectedOption: "" },
+      ...createInitialFormData(),
       order: questionAnswers.length,
     });
   };

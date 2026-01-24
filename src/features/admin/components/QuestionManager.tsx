@@ -2,40 +2,54 @@
 
 import { useState } from "react";
 import { Question } from "@/entities/question";
-import { createQuestion } from "../api/createQuestion";
-import { updateQuestion } from "../api/updateQuestion";
-import { deleteQuestion } from "../api/deleteQuestion";
+import { createQuestion, updateQuestion, deleteQuestion } from "@/features/admin";
+import {
+  validateQuestionForm,
+  handleError,
+  confirmAction,
+} from "@/utils";
+import {
+  CONFIRMATION_MESSAGES,
+  ERROR_MESSAGES,
+  UI_CONSTANTS,
+} from "@/lib/constants";
 
 type Props = {
   questions: Question[];
   onUpdate: () => void;
 };
 
+type FormData = {
+  text: string;
+  options: string[];
+  order: number;
+};
+
+const createInitialFormData = (): FormData => ({
+  text: "",
+  options: Array(UI_CONSTANTS.DEFAULT_OPTIONS_COUNT).fill(""),
+  order: 0,
+});
+
 export const QuestionManager = ({ questions, onUpdate }: Props) => {
   const [editing, setEditing] = useState<Question | null>(null);
   const [isCreating, setIsCreating] = useState(false);
-  const [formData, setFormData] = useState({
-    text: "",
-    options: ["", "", ""],
-    order: 0,
-  });
+  const [formData, setFormData] = useState<FormData>(createInitialFormData());
 
   const resetForm = () => {
-    setFormData({ text: "", options: ["", "", ""], order: 0 });
+    setFormData(createInitialFormData());
     setEditing(null);
     setIsCreating(false);
   };
 
+  const getValidOptions = () => formData.options.filter((o) => o.trim());
+
   const handleCreate = async () => {
-    const validOptions = formData.options.filter((o) => o.trim());
-    
-    if (!formData.text.trim()) {
-      alert("質問文を入力してください");
-      return;
-    }
-    
-    if (validOptions.length < 2) {
-      alert("選択肢を2つ以上入力してください");
+    const validOptions = getValidOptions();
+    const validationError = validateQuestionForm(formData.text, validOptions);
+
+    if (validationError) {
+      alert(validationError);
       return;
     }
 
@@ -49,25 +63,18 @@ export const QuestionManager = ({ questions, onUpdate }: Props) => {
       resetForm();
       onUpdate();
     } catch (error) {
-      console.error("質問の作成に失敗しました:", error);
-      alert("質問の作成に失敗しました。もう一度お試しください。");
+      handleError("質問の作成に失敗しました", error, ERROR_MESSAGES.CREATE_QUESTION_FAILED);
     }
   };
 
   const handleUpdate = async () => {
-    const validOptions = formData.options.filter((o) => o.trim());
-    
-    if (!editing) {
-      return;
-    }
-    
-    if (!formData.text.trim()) {
-      alert("質問文を入力してください");
-      return;
-    }
-    
-    if (validOptions.length < 2) {
-      alert("選択肢を2つ以上入力してください");
+    if (!editing) return;
+
+    const validOptions = getValidOptions();
+    const validationError = validateQuestionForm(formData.text, validOptions);
+
+    if (validationError) {
+      alert(validationError);
       return;
     }
 
@@ -82,20 +89,18 @@ export const QuestionManager = ({ questions, onUpdate }: Props) => {
       resetForm();
       onUpdate();
     } catch (error) {
-      console.error("質問の更新に失敗しました:", error);
-      alert("質問の更新に失敗しました。もう一度お試しください。");
+      handleError("質問の更新に失敗しました", error, ERROR_MESSAGES.UPDATE_QUESTION_FAILED);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("この質問を削除しますか？")) return;
+    if (!confirmAction(CONFIRMATION_MESSAGES.DELETE_QUESTION)) return;
 
     try {
       await deleteQuestion(id);
       onUpdate();
     } catch (error) {
-      console.error("質問の削除に失敗しました:", error);
-      alert("質問の削除に失敗しました。もう一度お試しください。");
+      handleError("質問の削除に失敗しました", error, ERROR_MESSAGES.DELETE_QUESTION_FAILED);
     }
   };
 
@@ -113,8 +118,7 @@ export const QuestionManager = ({ questions, onUpdate }: Props) => {
     setIsCreating(true);
     setEditing(null);
     setFormData({
-      text: "",
-      options: ["", "", ""],
+      ...createInitialFormData(),
       order: questions.length,
     });
   };
