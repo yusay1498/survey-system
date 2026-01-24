@@ -5,9 +5,9 @@ import { ResultPattern } from "@/entities/resultPattern";
 export const updateResultPattern = async (
   pattern: Omit<ResultPattern, "createdAt">
 ): Promise<void> => {
-  const ref = doc(firestore, "resultPatterns", pattern.id);
+  const patternRef = doc(firestore, "resultPatterns", pattern.id);
 
-  await updateDoc(ref, {
+  await updateDoc(patternRef, {
     name: pattern.name,
     message: pattern.message,
     description: pattern.description,

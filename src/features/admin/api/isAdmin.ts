@@ -2,8 +2,8 @@ import { doc, getDoc } from "firebase/firestore";
 import { firestore} from "@/lib/firebase";
 
 export const isAdmin = async (userId: string): Promise<boolean> => {
-  const ref = doc(firestore, "admins", userId);
-  const snap = await getDoc(ref);
+  const adminDocRef = doc(firestore, "admins", userId);
+  const adminSnapshot = await getDoc(adminDocRef);
 
-  return snap.exists();
+  return adminSnapshot.exists();
 };

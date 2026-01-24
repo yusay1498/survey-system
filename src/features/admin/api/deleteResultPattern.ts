@@ -4,6 +4,6 @@ import { firestore } from "@/lib/firebase";
 export const deleteResultPattern = async (
   patternId: string
 ): Promise<void> => {
-  const ref = doc(firestore, "resultPatterns", patternId);
-  await deleteDoc(ref);
+  const patternRef = doc(firestore, "resultPatterns", patternId);
+  await deleteDoc(patternRef);
 };

@@ -25,8 +25,8 @@ export const AdminDashboard = ({ userEmail, userId, onLogout }: Props) => {
   useEffect(() => {
     if (!questionsLoaded) {
       getQuestions()
-        .then((q) => {
-          setQuestions(q);
+        .then((fetchedQuestions) => {
+          setQuestions(fetchedQuestions);
           setQuestionsLoaded(true);
         })
         .catch((error) => {
@@ -39,8 +39,8 @@ export const AdminDashboard = ({ userEmail, userId, onLogout }: Props) => {
   useEffect(() => {
     if (!patternsLoaded) {
       getResultPatterns()
-        .then((p) => {
-          setPatterns(p);
+        .then((fetchedPatterns) => {
+          setPatterns(fetchedPatterns);
           setPatternsLoaded(true);
         })
         .catch((error) => {
@@ -51,13 +51,13 @@ export const AdminDashboard = ({ userEmail, userId, onLogout }: Props) => {
   }, [patternsLoaded]);
 
   const loadQuestions = async () => {
-    const q = await getQuestions();
-    setQuestions(q);
+    const fetchedQuestions = await getQuestions();
+    setQuestions(fetchedQuestions);
   };
 
   const loadPatterns = async () => {
-    const p = await getResultPatterns();
-    setPatterns(p);
+    const fetchedPatterns = await getResultPatterns();
+    setPatterns(fetchedPatterns);
   };
 
   return (
