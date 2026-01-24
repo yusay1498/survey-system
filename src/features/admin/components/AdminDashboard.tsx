@@ -2,8 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { Question } from "@/entities/question";
+import { ResultPattern } from "@/entities/resultPattern";
 import { getQuestions } from "@/features/survey/api/getQuestions";
+import { getResultPatterns } from "@/features/survey/api/getResultPatterns";
 import { QuestionManager } from "./QuestionManager";
+import { ResultPatternManager } from "./ResultPatternManager";
 import { ResultList } from "@/features/survey/components/ResultList";
 import { AdminHeader } from "./AdminHeader";
 
@@ -16,6 +19,8 @@ type Props = {
 export const AdminDashboard = ({ userEmail, userId, onLogout }: Props) => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [questionsLoaded, setQuestionsLoaded] = useState(false);
+  const [patterns, setPatterns] = useState<ResultPattern[]>([]);
+  const [patternsLoaded, setPatternsLoaded] = useState(false);
 
   useEffect(() => {
     if (!questionsLoaded) {
@@ -31,9 +36,28 @@ export const AdminDashboard = ({ userEmail, userId, onLogout }: Props) => {
     }
   }, [questionsLoaded]);
 
+  useEffect(() => {
+    if (!patternsLoaded) {
+      getResultPatterns()
+        .then((p) => {
+          setPatterns(p);
+          setPatternsLoaded(true);
+        })
+        .catch((error) => {
+          console.error("Failed to load result patterns:", error);
+          setPatternsLoaded(true);
+        });
+    }
+  }, [patternsLoaded]);
+
   const loadQuestions = async () => {
     const q = await getQuestions();
     setQuestions(q);
+  };
+
+  const loadPatterns = async () => {
+    const p = await getResultPatterns();
+    setPatterns(p);
   };
 
   return (
@@ -42,6 +66,14 @@ export const AdminDashboard = ({ userEmail, userId, onLogout }: Props) => {
 
       <div className="space-y-8">
         <QuestionManager questions={questions} onUpdate={loadQuestions} />
+
+        <div className="border-t pt-6 dark:border-gray-700">
+          <ResultPatternManager 
+            patterns={patterns} 
+            questions={questions}
+            onUpdate={loadPatterns} 
+          />
+        </div>
 
         <div className="border-t pt-6 dark:border-gray-700">
           <h2 className="text-xl font-bold mb-4">回答結果</h2>
