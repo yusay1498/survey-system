@@ -15,7 +15,7 @@ import {
   UI_CONSTANTS,
 } from "@/lib/constants";
 
-type Props = {
+type QuestionManagerProps = {
   questions: Question[];
   onUpdate: () => void;
 };
@@ -26,7 +26,7 @@ const createInitialFormData = (): QuestionFormData => ({
   order: 0,
 });
 
-export const QuestionManager = ({ questions, onUpdate }: Props) => {
+export const QuestionManager = ({ questions, onUpdate }: QuestionManagerProps) => {
   const {
     editing,
     isCreating,

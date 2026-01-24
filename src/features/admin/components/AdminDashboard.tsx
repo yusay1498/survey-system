@@ -14,13 +14,13 @@ import { AdminHeader } from "./AdminHeader";
 import { useAsyncData } from "@/utils";
 import { Spinner } from "@/components/ui";
 
-type Props = {
+type AdminDashboardProps = {
   userEmail: string | null;
   userId: string;
   onLogout: () => void;
 };
 
-export const AdminDashboard = ({ userEmail, userId, onLogout }: Props) => {
+export const AdminDashboard = ({ userEmail, userId, onLogout }: AdminDashboardProps) => {
   const {
     data: questions,
     loading: questionsLoading,

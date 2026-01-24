@@ -19,7 +19,7 @@ import {
   ERROR_MESSAGES,
 } from "@/lib/constants";
 
-type Props = {
+type QuestionAnswerManagerProps = {
   questionAnswers: QuestionAnswer[];
   questions: Question[];
   onUpdate: () => void;
@@ -34,7 +34,7 @@ const createInitialFormData = (): QuestionAnswerFormData => ({
   order: 0,
 });
 
-export const QuestionAnswerManager = ({ questionAnswers, questions, onUpdate }: Props) => {
+export const QuestionAnswerManager = ({ questionAnswers, questions, onUpdate }: QuestionAnswerManagerProps) => {
   const {
     editing,
     isCreating,

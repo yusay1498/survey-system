@@ -7,14 +7,14 @@ import { Question } from "@/entities/question";
 import { findMatchingQuestionAnswer } from "../lib/matchQuestionAnswer";
 import { GradientCard } from "@/components/ui";
 
-type Props = {
+type PersonalityResultProps = {
   userAnswers: Answer[];
   pattern: ResultPattern | null;
   questionAnswers: QuestionAnswer[];
   questions: Question[];
 };
 
-export const PersonalityResult = ({ userAnswers, pattern, questionAnswers, questions }: Props) => {
+export const PersonalityResult = ({ userAnswers, pattern, questionAnswers, questions }: PersonalityResultProps) => {
   // 各質問に対するパーソナライズな回答を取得
   const getAnswerDetails = () => {
     return userAnswers.map((answer) => {

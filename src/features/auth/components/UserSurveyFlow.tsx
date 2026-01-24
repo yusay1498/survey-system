@@ -6,11 +6,11 @@ import { saveUser } from "../api/saveUser";
 import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
 import { LoadingScreen } from "@/components/ui";
 
-type Props = {
+type UserSurveyFlowProps = {
   userId: string;
 };
 
-export const UserSurveyFlow = ({ userId }: Props) => {
+export const UserSurveyFlow = ({ userId }: UserSurveyFlowProps) => {
   // useLocalStorageを使用してuserNameを永続化
   const [userName, setUserName, , isLoading] = useLocalStorage<string | null>(
     `user_name_${userId}`,

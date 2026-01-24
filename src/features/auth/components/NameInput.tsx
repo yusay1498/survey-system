@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 
-type Props = {
+type NameInputProps = {
   onSubmit: (name: string) => void;
 };
 
-export const NameInput = ({ onSubmit }: Props) => {
+export const NameInput = ({ onSubmit }: NameInputProps) => {
   const [name, setName] = useState("");
 
   return (

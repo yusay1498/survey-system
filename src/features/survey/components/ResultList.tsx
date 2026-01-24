@@ -9,11 +9,11 @@ import { Answer } from "@/entities/answer";
 import { Question } from "@/entities/question";
 import { QuestionAnswer } from "@/entities/questionAnswer";
 
-type Props = {
+type ResultListProps = {
   questions: Question[];
 };
 
-export const ResultList = ({ questions }: Props) => {
+export const ResultList = ({ questions }: ResultListProps) => {
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [questionAnswers, setQuestionAnswers] = useState<QuestionAnswer[]>([]);
   const [loading, setLoading] = useState(true);

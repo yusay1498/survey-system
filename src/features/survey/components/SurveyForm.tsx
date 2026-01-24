@@ -20,7 +20,7 @@ import {
 import { handleError, confirmAction } from "@/utils";
 import { CONFIRMATION_MESSAGES, ERROR_MESSAGES, BASE_PATH } from "@/lib/constants";
 
-type Props = {
+type SurveyFormProps = {
   userId: string;
   userName: string;
 };
@@ -36,7 +36,7 @@ type SurveyProgress = {
   currentQuestionAnswerId: string | null;
 };
 
-export const SurveyForm = ({ userId, userName }: Props) => {
+export const SurveyForm = ({ userId, userName }: SurveyFormProps) => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);

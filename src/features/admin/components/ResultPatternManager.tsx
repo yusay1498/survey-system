@@ -19,7 +19,7 @@ import {
   ERROR_MESSAGES,
 } from "@/lib/constants";
 
-type Props = {
+type ResultPatternManagerProps = {
   patterns: ResultPattern[];
   questions: Question[];
   onUpdate: () => void;
@@ -34,7 +34,7 @@ const createInitialFormData = (): ResultPatternFormData => ({
   order: 0,
 });
 
-export const ResultPatternManager = ({ patterns, questions, onUpdate }: Props) => {
+export const ResultPatternManager = ({ patterns, questions, onUpdate }: ResultPatternManagerProps) => {
   const {
     editing,
     isCreating,
