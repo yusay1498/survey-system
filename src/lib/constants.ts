@@ -68,3 +68,10 @@ export const UI_CONSTANTS = {
   DEFAULT_OPTIONS_COUNT: 3,
   MIN_CONDITIONS: 1,
 } as const;
+
+/**
+ * アプリケーションのベースパス
+ * 本番環境ではGitHub Pagesのサブパスを使用
+ */
+export const BASE_PATH =
+  process.env.NODE_ENV === "production" ? "/survey-system" : "";
