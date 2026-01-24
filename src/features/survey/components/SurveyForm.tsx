@@ -8,6 +8,7 @@ import { QuestionAnswer } from "@/entities/questionAnswer";
 import { ResultList } from "./ResultList";
 import { PersonalityResult } from "./PersonalityResult";
 import { QuestionPersonalizedAnswer } from "./QuestionPersonalizedAnswer";
+import { Spinner } from "@/components/ui";
 import { getQuestions } from "../api/getQuestions";
 import { submitAnswer } from "../api/submitAnswer";
 import { getResultPatterns } from "../api/getResultPatterns";
@@ -163,7 +164,11 @@ export const SurveyForm = ({ userId, userName }: Props) => {
     }
   }, [focusedOptionIndex, showResults]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return (
+    <div className="flex items-center justify-center p-12">
+      <Spinner size="lg" label="アンケートを読み込んでいます..." />
+    </div>
+  );
 
   // Handle loading error
   if (loadError) {
@@ -254,7 +259,9 @@ export const SurveyForm = ({ userId, userName }: Props) => {
           </div>
 
           {submitting && (
-            <p className="mt-4 text-center text-gray-600 dark:text-gray-400">送信中...</p>
+            <div className="mt-4 flex items-center justify-center">
+              <Spinner size="sm" label="送信中..." />
+            </div>
           )}
         </div>
       ) : (

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { signInWithEmail } from "../api/signInWithEmail";
+import { Spinner } from "@/components/ui";
 
 export const AdminLoginForm = () => {
   const [email, setEmail] = useState("");
@@ -39,10 +40,11 @@ export const AdminLoginForm = () => {
       />
 
       <button
-        className="bg-blue-600 text-white px-3 py-1 rounded w-full dark:bg-blue-500 dark:hover:bg-blue-600"
+        className="bg-blue-600 text-white px-3 py-1 rounded w-full dark:bg-blue-500 dark:hover:bg-blue-600 flex items-center justify-center gap-2"
         onClick={handleLogin}
         disabled={loading}
       >
+        {loading && <Spinner size="sm" label="ログイン中..." />}
         ログイン
       </button>
     </div>

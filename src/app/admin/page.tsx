@@ -5,6 +5,7 @@ import { isAdmin } from "@/features/admin/api/isAdmin";
 import { UnauthorizedAccess } from "@/features/admin/components/UnauthorizedAccess";
 import { AdminDashboard } from "@/features/admin/components/AdminDashboard";
 import { signOut } from "@/features/auth/api/signOut";
+import { LoadingScreen } from "@/components/ui";
 import { useEffect, useState } from "react";
 
 export default function AdminPage() {
@@ -36,7 +37,7 @@ export default function AdminPage() {
   };
 
   if (loading || checking) {
-    return <p className="p-6">Loading...</p>;
+    return <LoadingScreen />;
   }
 
   if (!user || user.isAnonymous) {

@@ -3,6 +3,7 @@
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { LoginSelection } from "@/features/auth/components/LoginSelection";
 import { UserSurveyFlow } from "@/features/auth/components/UserSurveyFlow";
+import { LoadingScreen } from "@/components/ui";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
@@ -12,10 +13,10 @@ export default function Home() {
   // Redirect admin users to admin page
   if (user && !loading && !user.isAnonymous) {
     router.push("/admin");
-    return <p className="p-6">管理者画面に移動中...</p>;
+    return <LoadingScreen message="管理者画面に移動中..." />;
   }
 
-  if (loading) return <p className="p-6">Loading...</p>;
+  if (loading) return <LoadingScreen />;
 
   // If no user, show login selection
   if (!user) {
