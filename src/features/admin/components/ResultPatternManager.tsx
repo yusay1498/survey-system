@@ -38,7 +38,7 @@ export const ResultPatternManager = ({ patterns, questions, onUpdate }: ResultPa
     startCreate,
   } = useCRUDManager<ResultPattern, ResultPatternFormData>(createInitialFormData);
 
-  const validateForm = (): ResultCondition[] | null => {
+  const validateForm = (): ResultCondition[] | undefined => {
     const nameValidationError = validateResultPatternForm(
       formData.name,
       formData.message,
@@ -47,7 +47,7 @@ export const ResultPatternManager = ({ patterns, questions, onUpdate }: ResultPa
 
     if (nameValidationError) {
       alert(nameValidationError);
-      return null;
+      return undefined;
     }
 
     const validConditions = formData.conditions.filter((condition) => {
@@ -72,7 +72,7 @@ export const ResultPatternManager = ({ patterns, questions, onUpdate }: ResultPa
 
     if (validConditions.length === 0) {
       alert("少なくとも1つの有効な条件を設定してください");
-      return null;
+      return undefined;
     }
 
     // 無効な条件が含まれていた場合は警告

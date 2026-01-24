@@ -7,7 +7,7 @@ import { VALIDATION_MESSAGES, UI_CONSTANTS } from "@/lib/constants";
 export const validateQuestionForm = (
   text: string,
   options: string[]
-): string | null => {
+): string | undefined => {
   if (!text.trim()) {
     return VALIDATION_MESSAGES.REQUIRED_QUESTION_TEXT;
   }
@@ -17,7 +17,7 @@ export const validateQuestionForm = (
     return VALIDATION_MESSAGES.REQUIRED_OPTIONS;
   }
 
-  return null;
+  return undefined;
 };
 
 /**
@@ -29,7 +29,7 @@ export const validateQuestionAnswerForm = (
   message: string,
   selectedOption: string,
   questions: Question[]
-): string | null => {
+): string | undefined => {
   if (!questionId) {
     return VALIDATION_MESSAGES.REQUIRED_QUESTION_SELECT;
   }
@@ -57,7 +57,7 @@ export const validateQuestionAnswerForm = (
     return VALIDATION_MESSAGES.OPTION_NOT_IN_QUESTION;
   }
 
-  return null;
+  return undefined;
 };
 
 /**
@@ -67,7 +67,7 @@ export const validateResultPatternForm = (
   name: string,
   message: string,
   conditionsCount: number
-): string | null => {
+): string | undefined => {
   if (!name.trim()) {
     return VALIDATION_MESSAGES.REQUIRED_RESULT_NAME;
   }
@@ -80,7 +80,7 @@ export const validateResultPatternForm = (
     return VALIDATION_MESSAGES.REQUIRED_CONDITIONS;
   }
 
-  return null;
+  return undefined;
 };
 
 /**

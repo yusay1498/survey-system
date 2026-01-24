@@ -19,10 +19,10 @@ export function useAsyncData<T>(
   fetcher: () => Promise<T>,
   dependencies: unknown[] = []
 ) {
-  const [data, setData] = useState<T | null>(null);
+  const [data, setData] = useState<T | undefined>(undefined);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-  const abortControllerRef = useRef<AbortController | null>(null);
+  const [error, setError] = useState<Error | undefined>(undefined);
+  const abortControllerRef = useRef<AbortController | undefined>(undefined);
 
   const loadData = useCallback(async () => {
     // 前回のリクエストをキャンセル
@@ -36,7 +36,7 @@ export function useAsyncData<T>(
 
     try {
       setLoading(true);
-      setError(null);
+      setError(undefined);
       const result = await fetcher();
       
       // 最新のリクエストであり、かつキャンセルされていない場合のみ状態を更新

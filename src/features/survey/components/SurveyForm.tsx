@@ -24,7 +24,7 @@ import type { SurveyFormProps, SurveyProgress } from "@/features/survey";
 export const SurveyForm = ({ userId, userName }: SurveyFormProps) => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [selectedOption, setSelectedOption] = useState<string | undefined>(undefined);
   const [showResults, setShowResults] = useState(false);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
@@ -32,12 +32,12 @@ export const SurveyForm = ({ userId, userName }: SurveyFormProps) => {
   const [completed, setCompleted] = useState(false);
   const [focusedOptionIndex, setFocusedOptionIndex] = useState(0);
   const optionRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const restoredUserIdRef = useRef<string | null>(null);
+  const restoredUserIdRef = useRef<string | undefined>(undefined);
   const [userAnswers, setUserAnswers] = useState<Answer[]>([]);
   const [resultPatterns, setResultPatterns] = useState<ResultPattern[]>([]);
-  const [matchedPattern, setMatchedPattern] = useState<ResultPattern | null>(null);
+  const [matchedPattern, setMatchedPattern] = useState<ResultPattern | undefined>(undefined);
   const [questionAnswers, setQuestionAnswers] = useState<QuestionAnswer[]>([]);
-  const [currentQuestionAnswer, setCurrentQuestionAnswer] = useState<QuestionAnswer | null>(null);
+  const [currentQuestionAnswer, setCurrentQuestionAnswer] = useState<QuestionAnswer | undefined>(undefined);
 
   // LocalStorageのキー
   const storageKey = `survey_progress_${userId}`;
@@ -146,11 +146,11 @@ export const SurveyForm = ({ userId, userName }: SurveyFormProps) => {
       setSelectedOption(
         typeof savedProgress.selectedOption === "string"
           ? savedProgress.selectedOption
-          : null
+          : undefined
       );
 
       // マッチしたパターンを復元（存在する場合のみ）
-      if (savedProgress.completed && savedProgress.matchedPatternId != null) {
+      if (savedProgress.completed && savedProgress.matchedPatternId !== undefined) {
         const pattern = resultPatterns.find(
           (p) => p.id === savedProgress.matchedPatternId
         );
@@ -160,7 +160,7 @@ export const SurveyForm = ({ userId, userName }: SurveyFormProps) => {
       }
 
       // currentQuestionAnswer を復元
-      if (savedProgress.showResults && savedProgress.currentQuestionAnswerId != null) {
+      if (savedProgress.showResults && savedProgress.currentQuestionAnswerId !== undefined) {
         const questionAnswer = questionAnswers.find(
           (qa) => qa.id === savedProgress.currentQuestionAnswerId
         );
@@ -223,11 +223,11 @@ export const SurveyForm = ({ userId, userName }: SurveyFormProps) => {
         selectedOption: option,
         userAnswers: updatedAnswers,
         completed: false,
-        currentQuestionAnswerId: matchedQuestionAnswer?.id || null,
+        currentQuestionAnswerId: matchedQuestionAnswer?.id,
       });
     } catch (error) {
       setSubmitting(false);
-      setSelectedOption(null); // Reset selection to allow retry
+      setSelectedOption(undefined); // Reset selection to allow retry
       handleError("Failed to submit answer", error, ERROR_MESSAGES.SUBMIT_ANSWER_FAILED);
     }
   };
@@ -236,9 +236,9 @@ export const SurveyForm = ({ userId, userName }: SurveyFormProps) => {
     if (currentQuestionIndex < questions.length - 1) {
       const nextIndex = currentQuestionIndex + 1;
       setCurrentQuestionIndex(nextIndex);
-      setSelectedOption(null);
+      setSelectedOption(undefined);
       setShowResults(false);
-      setCurrentQuestionAnswer(null); // リセット
+      setCurrentQuestionAnswer(undefined); // リセット
       setFocusedOptionIndex(0); // Reset focus for next question
       optionRefs.current = []; // Clear refs for next question
 
@@ -246,14 +246,14 @@ export const SurveyForm = ({ userId, userName }: SurveyFormProps) => {
       saveProgress({
         currentQuestionIndex: nextIndex,
         showResults: false,
-        selectedOption: null,
+        selectedOption: undefined,
         userAnswers,
         completed: false,
-        currentQuestionAnswerId: null,
+        currentQuestionAnswerId: undefined,
       });
     } else {
       // All questions completed - calculate result from locally stored answers
-      let pattern: ResultPattern | null = null;
+      let pattern: ResultPattern | undefined = undefined;
       try {
         pattern = findMatchingPattern(userAnswers, resultPatterns);
         setMatchedPattern(pattern);
@@ -268,11 +268,11 @@ export const SurveyForm = ({ userId, userName }: SurveyFormProps) => {
       saveProgress({
         currentQuestionIndex,
         showResults: false,
-        selectedOption: null,
+        selectedOption: undefined,
         userAnswers,
         completed: true,
-        matchedPatternId: pattern?.id || null,
-        currentQuestionAnswerId: null,
+        matchedPatternId: pattern?.id,
+        currentQuestionAnswerId: undefined,
       });
     }
   };

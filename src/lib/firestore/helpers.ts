@@ -78,12 +78,12 @@ export const deleteDocument = async (
 export const getDocument = async <T extends BaseEntity>(
   collectionName: string,
   id: string
-): Promise<T | null> => {
+): Promise<T | undefined> => {
   const docRef = doc(db, collectionName, id);
   const snapshot = await getDoc(docRef);
 
   if (!snapshot.exists()) {
-    return null;
+    return undefined;
   }
 
   const data = snapshot.data();

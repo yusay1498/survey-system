@@ -21,12 +21,12 @@ export const withErrorHandling = async <T>(
   asyncFn: () => Promise<T>,
   context: string,
   userMessage: string
-): Promise<T | null> => {
+): Promise<T | undefined> => {
   try {
     return await asyncFn();
   } catch (error) {
     handleError(context, error, userMessage);
-    return null;
+    return undefined;
   }
 };
 
