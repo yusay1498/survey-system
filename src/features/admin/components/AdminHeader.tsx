@@ -1,12 +1,8 @@
 "use client";
 
-type Props = {
-  email: string | null;
-  userId: string;
-  onLogout: () => void;
-};
+import type { AdminHeaderProps } from "@/features/admin";
 
-export const AdminHeader = ({ email, userId, onLogout }: Props) => {
+export const AdminHeader = ({ email, userId, onLogout }: AdminHeaderProps) => {
   return (
     <div className="mb-6 flex justify-between items-center">
       <div>

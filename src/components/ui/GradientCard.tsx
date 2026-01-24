@@ -15,6 +15,8 @@ const variantClasses = {
 
 /**
  * グラデーション背景を持つカードコンポーネント
+ * 
+ * Note: padding は呼び出し側で className に含めて指定してください
  */
 export const GradientCard = ({ 
   children, 
@@ -22,7 +24,7 @@ export const GradientCard = ({
   variant = "default" 
 }: GradientCardProps) => {
   return (
-    <div className={`${variantClasses[variant]} rounded-lg p-6 ${className}`}>
+    <div className={`${variantClasses[variant]} rounded-lg ${className}`}>
       {children}
     </div>
   );

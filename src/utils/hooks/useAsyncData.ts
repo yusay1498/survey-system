@@ -23,26 +23,27 @@ export function useAsyncData<T>(
       abortControllerRef.current.abort();
     }
 
-    // 新しいAbortControllerを作成
-    abortControllerRef.current = new AbortController();
+    // 新しいAbortControllerを作成し、ローカル変数として保持
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
 
     try {
       setLoading(true);
       setError(null);
       const result = await fetcher();
       
-      // リクエストがキャンセルされていない場合のみ状態を更新
-      if (!abortControllerRef.current.signal.aborted) {
+      // 最新のリクエストであり、かつキャンセルされていない場合のみ状態を更新
+      if (abortControllerRef.current === controller && !controller.signal.aborted) {
         setData(result);
       }
     } catch (err) {
       // キャンセルエラーは無視
-      if (!abortControllerRef.current.signal.aborted) {
+      if (abortControllerRef.current === controller && !controller.signal.aborted) {
         setError(err instanceof Error ? err : new Error(String(err)));
         console.error("Failed to load data:", err);
       }
     } finally {
-      if (!abortControllerRef.current.signal.aborted) {
+      if (abortControllerRef.current === controller && !controller.signal.aborted) {
         setLoading(false);
       }
     }
@@ -57,10 +58,7 @@ export function useAsyncData<T>(
         abortControllerRef.current.abort();
       }
     };
-    // dependencies配列は意図的に渡された依存関係を使用
-    // この警告は誤検知のため無効化
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, dependencies);
+  }, [loadData, ...dependencies]);
 
   return {
     data,
