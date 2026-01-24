@@ -1,17 +1,7 @@
-import { collection, getDocs, query, orderBy } from "firebase/firestore";
-import { firestore } from "@/lib/firebase";
 import { Question } from "@/entities/question";
+import { getCollection } from "@/lib/firestore/helpers";
+import { COLLECTIONS } from "@/lib/constants";
 
 export const getQuestions = async (): Promise<Question[]> => {
-  const questionsQuery = query(
-    collection(firestore, "questions"),
-    orderBy("order", "asc")
-  );
-
-  const snapshot = await getDocs(questionsQuery);
-
-  return snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...(doc.data() as Omit<Question, "id">),
-  }));
+  return getCollection<Question>(COLLECTIONS.QUESTIONS, "order", "asc");
 };

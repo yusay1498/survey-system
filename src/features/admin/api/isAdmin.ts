@@ -1,9 +1,6 @@
-import { doc, getDoc } from "firebase/firestore";
-import { firestore} from "@/lib/firebase";
+import { documentExists } from "@/lib/firestore/helpers";
+import { COLLECTIONS } from "@/lib/constants";
 
 export const isAdmin = async (userId: string): Promise<boolean> => {
-  const adminDocRef = doc(firestore, "admins", userId);
-  const adminSnapshot = await getDoc(adminDocRef);
-
-  return adminSnapshot.exists();
+  return documentExists(COLLECTIONS.ADMINS, userId);
 };

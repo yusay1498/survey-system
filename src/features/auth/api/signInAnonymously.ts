@@ -1,7 +1,7 @@
-import { signInAnonymously as firebaseSignInAnonymously } from "firebase/auth";
-import { firebaseAuth } from "@/lib/firebase";
+import { signInAnonymously as firebaseSignInAnonymously, User } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
-export const signInAnonymously = async () => {
-  const result = await firebaseSignInAnonymously(firebaseAuth);
+export const signInAnonymously = async (): Promise<User> => {
+  const result = await firebaseSignInAnonymously(auth);
   return result.user;
 };

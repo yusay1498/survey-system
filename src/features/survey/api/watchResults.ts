@@ -3,15 +3,17 @@ import {
   onSnapshot,
   query,
   orderBy,
+  Unsubscribe,
 } from "firebase/firestore";
-import { firestore } from "@/lib/firebase";
+import { db } from "@/lib/firebase";
 import { Answer } from "@/entities/answer";
+import { COLLECTIONS } from "@/lib/constants";
 
 export const watchResults = (
   onChange: (answers: Answer[]) => void
-) => {
+): Unsubscribe => {
   const answersQuery = query(
-    collection(firestore, "answers"),
+    collection(db, COLLECTIONS.ANSWERS),
     orderBy("createdAt", "asc")
   );
 
