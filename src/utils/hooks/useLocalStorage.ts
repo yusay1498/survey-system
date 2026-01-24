@@ -14,7 +14,8 @@ export function useLocalStorage<T>(
 ): [T, (value: T | ((prev: T) => T)) => void, () => void, boolean] {
   const [storedValue, setStoredValue] = useState<T>(initialValue);
   const [isClient, setIsClient] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  // SSR時はローディング状態にしない（クライアントでのみローディング）
+  const [isLoading, setIsLoading] = useState(typeof window !== 'undefined');
 
   // クライアントサイドでのみlocalStorageから値を読み込む
   useEffect(() => {

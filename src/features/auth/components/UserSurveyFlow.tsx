@@ -12,7 +12,7 @@ type Props = {
 
 export const UserSurveyFlow = ({ userId }: Props) => {
   // useLocalStorageを使用してuserNameを永続化
-  const [userName, setUserName, , isLoading] = useLocalStorage<string | null>(
+  const [userName, setUserName, _clearUserName, isLoading] = useLocalStorage<string | null>(
     `user_name_${userId}`,
     null
   );
