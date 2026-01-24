@@ -1,4 +1,4 @@
-# 結果パターン編集機能 (Result Pattern Editing Feature)
+# 結果パターン編集機能
 
 ## 概要
 
