@@ -12,6 +12,8 @@ export function findMatchingPattern(
   userAnswers: Answer[],
   patterns: ResultPattern[]
 ): ResultPattern | null {
+  // Return null if there are no answers to match against
+  if (userAnswers.length === 0) return null;
   if (patterns.length === 0) return null;
 
   // Sort by priority (desc) then by specificity (more conditions = more specific)

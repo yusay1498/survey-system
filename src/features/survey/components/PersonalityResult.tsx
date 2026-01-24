@@ -35,16 +35,18 @@ export const PersonalityResult = ({ userAnswers, pattern }: Props) => {
       </div>
       
       {/* Show user's answers for context */}
-      <div className="text-sm text-gray-600 dark:text-gray-400 p-3 bg-gray-50 rounded dark:bg-gray-800">
-        <p className="font-semibold mb-2">あなたの回答:</p>
-        <ul className="space-y-1">
-          {userAnswers.map((answer, index) => (
-            <li key={answer.id ?? index}>
-              ・{answer.selectedOption}
-            </li>
-          ))}
-        </ul>
-      </div>
+      {userAnswers.length > 0 && (
+        <div className="text-sm text-gray-600 dark:text-gray-400 p-3 bg-gray-50 rounded dark:bg-gray-800">
+          <p className="font-semibold mb-2">あなたの回答:</p>
+          <ul className="space-y-1">
+            {userAnswers.map((answer, index) => (
+              <li key={answer.id ?? index}>
+                ・{answer.selectedOption}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };

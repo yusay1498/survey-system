@@ -14,15 +14,38 @@ export const getResultPatterns = async (): Promise<ResultPattern[]> => {
 
   return snapshot.docs.map((doc) => {
     const data = doc.data();
+    
+    // Validate required fields
+    const name = typeof data.name === "string" ? data.name : "";
+    const message = typeof data.message === "string" ? data.message : "";
+    const description = typeof data.description === "string" ? data.description : undefined;
+    
+    // Validate and filter conditions array
+    const rawConditions = Array.isArray(data.conditions) ? data.conditions : [];
+    const conditions = rawConditions.filter((condition) => {
+      return (
+        condition &&
+        typeof condition === "object" &&
+        typeof condition.questionId === "string" &&
+        typeof condition.selectedOption === "string"
+      );
+    });
+    
+    const priority = typeof data.priority === "number" ? data.priority : 0;
+    const order = typeof data.order === "number" ? data.order : 0;
+    const createdAt = typeof data.createdAt?.toDate === "function"
+      ? data.createdAt.toDate()
+      : new Date();
+    
     return {
       id: doc.id,
-      name: data.name,
-      message: data.message,
-      description: data.description,
-      conditions: data.conditions || [],
-      priority: data.priority || 0,
-      order: data.order || 0,
-      createdAt: data.createdAt?.toDate() || new Date(),
+      name,
+      message,
+      description,
+      conditions,
+      priority,
+      order,
+      createdAt,
     } as ResultPattern;
   });
 };

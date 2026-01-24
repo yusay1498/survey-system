@@ -22,6 +22,7 @@ export const SurveyForm = ({ userId, userName }: Props) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [showResults, setShowResults] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [completed, setCompleted] = useState(false);
   const [focusedOptionIndex, setFocusedOptionIndex] = useState(0);
@@ -42,6 +43,7 @@ export const SurveyForm = ({ userId, userName }: Props) => {
       })
       .catch((error) => {
         console.error("Failed to load survey data:", error);
+        setLoadError(true);
         setLoading(false);
       });
   }, []);
@@ -145,6 +147,23 @@ export const SurveyForm = ({ userId, userName }: Props) => {
   }, [focusedOptionIndex, showResults]);
 
   if (loading) return <p>Loading...</p>;
+
+  // Handle loading error
+  if (loadError) {
+    return (
+      <div className="p-6">
+        <p className="text-red-600 dark:text-red-400 mb-4">
+          アンケートデータの読み込みに失敗しました。
+        </p>
+        <button
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+          onClick={() => window.location.reload()}
+        >
+          再読み込み
+        </button>
+      </div>
+    );
+  }
 
   // Handle empty questions scenario
   if (questions.length === 0) {

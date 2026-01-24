@@ -10,6 +10,6 @@ export type ResultPattern = {
   description?: string;
   conditions: ResultCondition[];
   priority: number;
-  order: number;
+  order: number; // Reserved for future use (e.g., display ordering when multiple patterns match)
   createdAt: Date;
 };
