@@ -15,6 +15,7 @@ type Props = {
 export const ResultList = ({ questions }: Props) => {
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [questionAnswers, setQuestionAnswers] = useState<QuestionAnswer[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = watchResults(setAnswers);
@@ -22,11 +23,25 @@ export const ResultList = ({ questions }: Props) => {
   }, []);
 
   useEffect(() => {
+    let mounted = true;
+    
     getQuestionAnswers()
-      .then(setQuestionAnswers)
+      .then((data) => {
+        if (mounted) {
+          setQuestionAnswers(data);
+          setLoading(false);
+        }
+      })
       .catch((error) => {
         console.error("Failed to load question answers:", error);
+        if (mounted) {
+          setLoading(false);
+        }
       });
+    
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   return (
