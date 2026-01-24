@@ -186,38 +186,38 @@ export const QuestionAnswerManager = ({ questionAnswers, questions, onUpdate }: 
                 </p>
               ) : (
                 <div className="space-y-3">
-                  {answers.map((qa) => (
+                  {answers.map((questionAnswer) => (
                     <div
-                      key={qa.id}
+                      key={questionAnswer.id}
                       className="border rounded p-3 bg-gray-50 dark:bg-gray-700 dark:border-gray-600"
                     >
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
-                            <span className="font-bold">{qa.name}</span>
+                            <span className="font-bold">{questionAnswer.name}</span>
                             <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded dark:bg-blue-900 dark:text-blue-200">
-                              選択肢: {qa.condition.selectedOption}
+                              選択肢: {questionAnswer.condition.selectedOption}
                             </span>
                           </div>
                           <p className="text-sm text-gray-700 mb-1 dark:text-gray-300">
-                            {qa.message}
+                            {questionAnswer.message}
                           </p>
-                          {qa.description && (
+                          {questionAnswer.description && (
                             <p className="text-sm text-gray-600 dark:text-gray-400">
-                              {qa.description}
+                              {questionAnswer.description}
                             </p>
                           )}
                         </div>
                         <div className="flex gap-2">
                           <button
                             className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
-                            onClick={() => handleStartEdit(qa)}
+                            onClick={() => handleStartEdit(questionAnswer)}
                           >
                             編集
                           </button>
                           <button
                             className="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600"
-                            onClick={() => handleDelete(qa.id)}
+                            onClick={() => handleDelete(questionAnswer.id)}
                           >
                             削除
                           </button>
