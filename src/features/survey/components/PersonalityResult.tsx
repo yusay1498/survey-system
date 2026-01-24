@@ -24,11 +24,11 @@ export const PersonalityResult = ({ userAnswers, pattern }: Props) => {
 
   return (
     <div className="space-y-4">
-      <div className="p-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg text-white shadow-lg">
+      <div className="p-6 bg-gradient-to-r from-purple-700 to-pink-700 rounded-lg text-white shadow-lg">
         <h2 className="text-3xl font-bold mb-3">{pattern.name}</h2>
         <p className="text-lg leading-relaxed">{pattern.message}</p>
         {pattern.description && (
-          <p className="mt-4 text-base opacity-90 leading-relaxed">
+          <p className="mt-4 text-base leading-relaxed">
             {pattern.description}
           </p>
         )}
@@ -38,8 +38,8 @@ export const PersonalityResult = ({ userAnswers, pattern }: Props) => {
       <div className="text-sm text-gray-600 dark:text-gray-400 p-3 bg-gray-50 rounded dark:bg-gray-800">
         <p className="font-semibold mb-2">あなたの回答:</p>
         <ul className="space-y-1">
-          {userAnswers.map((answer) => (
-            <li key={`${answer.questionId}-${answer.selectedOption}`}>
+          {userAnswers.map((answer, index) => (
+            <li key={answer.id ?? index}>
               ・{answer.selectedOption}
             </li>
           ))}

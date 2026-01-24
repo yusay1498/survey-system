@@ -30,6 +30,8 @@ Firebase Firestoreの`questions`コレクションに以下の質問を追加し
 
 Firebase Firestoreの`resultPatterns`コレクションに以下のパターンを追加してください。
 
+**重要**: JSONの`createdAt`フィールドは例として表示していますが、Firebase Consoleで実際に追加する際は、フィールドタイプとして「timestamp」を選択し、現在の日時を設定してください。文字列として入力しないでください。
+
 ### パターン1: 「アクティブなコーヒー好き」
 ```json
 {

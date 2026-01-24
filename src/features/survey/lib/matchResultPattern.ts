@@ -21,6 +21,11 @@ export function findMatchingPattern(
   });
 
   for (const pattern of sorted) {
+    // Skip patterns with empty conditions (would match everything)
+    if (pattern.conditions.length === 0) {
+      continue;
+    }
+
     // Check if ALL conditions are met
     const isMatched = pattern.conditions.every((condition) =>
       userAnswers.some(
@@ -33,6 +38,6 @@ export function findMatchingPattern(
     if (isMatched) return pattern;
   }
 
-  // Return a fallback pattern if no match
+  // No matching pattern found; return null
   return null;
 }

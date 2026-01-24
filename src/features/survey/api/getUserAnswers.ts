@@ -3,6 +3,10 @@ import { firestore } from "@/lib/firebase";
 import { Answer } from "@/entities/answer";
 
 export const getUserAnswers = async (userId: string): Promise<Answer[]> => {
+  if (!userId || userId.trim().length === 0) {
+    throw new Error("userId is required");
+  }
+
   const q = query(
     collection(firestore, "answers"),
     where("userId", "==", userId)

@@ -8,7 +8,6 @@ import { ResultList } from "./ResultList";
 import { PersonalityResult } from "./PersonalityResult";
 import { getQuestions } from "../api/getQuestions";
 import { submitAnswer } from "../api/submitAnswer";
-import { getUserAnswers } from "../api/getUserAnswers";
 import { getResultPatterns } from "../api/getResultPatterns";
 import { findMatchingPattern } from "../lib/matchResultPattern";
 
@@ -35,11 +34,16 @@ export const SurveyForm = ({ userId, userName }: Props) => {
     Promise.all([
       getQuestions(),
       getResultPatterns()
-    ]).then(([q, patterns]) => {
-      setQuestions(q);
-      setResultPatterns(patterns);
-      setLoading(false);
-    });
+    ])
+      .then(([q, patterns]) => {
+        setQuestions(q);
+        setResultPatterns(patterns);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Failed to load survey data:", error);
+        setLoading(false);
+      });
   }, []);
 
   const handleOptionSelect = async (option: string) => {
@@ -63,13 +67,18 @@ export const SurveyForm = ({ userId, userName }: Props) => {
     const currentQuestion = questions[currentQuestionIndex];
     
     try {
-      await submitAnswer({
+      const newAnswer: Answer = {
         userId,
         userName,
         questionId: currentQuestion.id,
         selectedOption: option,
         createdAt: new Date(),
-      });
+      };
+
+      await submitAnswer(newAnswer);
+
+      // Store answer in state to avoid race condition when matching patterns
+      setUserAnswers(prev => [...prev, { ...newAnswer, id: `${userId}-${currentQuestion.id}` }]);
 
       setSubmitting(false);
       setShowResults(true);
@@ -89,15 +98,13 @@ export const SurveyForm = ({ userId, userName }: Props) => {
       setFocusedOptionIndex(0); // Reset focus for next question
       optionRefs.current = []; // Clear refs for next question
     } else {
-      // All questions completed - fetch user's answers and calculate result
+      // All questions completed - calculate result from locally stored answers
       try {
-        const answers = await getUserAnswers(userId);
-        setUserAnswers(answers);
-        const pattern = findMatchingPattern(answers, resultPatterns);
+        const pattern = findMatchingPattern(userAnswers, resultPatterns);
         setMatchedPattern(pattern);
         setCompleted(true);
       } catch (error) {
-        console.error("Failed to fetch user answers:", error);
+        console.error("Failed to calculate result pattern:", error);
         // Still show completion screen even if pattern matching fails
         // User will see the default completion message
         setCompleted(true);
