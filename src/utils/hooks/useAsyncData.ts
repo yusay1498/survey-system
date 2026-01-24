@@ -65,7 +65,10 @@ export function useAsyncData<T>(
         abortControllerRef.current.abort();
       }
     };
-  }, [loadData, ...dependencies]);
+    // loadDataを依存配列に含めると、fetcherがメモ化されていない場合に無限ループが発生するため除外
+    // loadDataはrefresh関数として公開され、手動での再読み込みに使用される
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, dependencies);
 
   return {
     data,
