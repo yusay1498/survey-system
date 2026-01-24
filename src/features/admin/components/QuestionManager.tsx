@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import { Question } from "@/entities/question";
 import { createQuestion, updateQuestion, deleteQuestion } from "@/features/admin";
 import {
   validateQuestionForm,
   handleError,
   confirmAction,
+  useCRUDManager,
 } from "@/utils";
 import {
   CONFIRMATION_MESSAGES,
@@ -19,30 +19,30 @@ type Props = {
   onUpdate: () => void;
 };
 
-type FormData = {
+type QuestionFormData = {
   text: string;
   options: string[];
   order: number;
 };
 
-const createInitialFormData = (): FormData => ({
+const createInitialFormData = (): QuestionFormData => ({
   text: "",
   options: Array(UI_CONSTANTS.DEFAULT_OPTIONS_COUNT).fill(""),
   order: 0,
 });
 
 export const QuestionManager = ({ questions, onUpdate }: Props) => {
-  const [editing, setEditing] = useState<Question | null>(null);
-  const [isCreating, setIsCreating] = useState(false);
-  const [formData, setFormData] = useState<FormData>(createInitialFormData());
+  const {
+    editing,
+    isCreating,
+    formData,
+    setFormData,
+    resetForm,
+    startEdit,
+    startCreate,
+  } = useCRUDManager<Question, QuestionFormData>(createInitialFormData);
 
-  const resetForm = () => {
-    setFormData(createInitialFormData());
-    setEditing(null);
-    setIsCreating(false);
-  };
-
-  const getValidOptions = () => formData.options.filter((o) => o.trim());
+  const getValidOptions = () => formData.options.filter((option) => option.trim());
 
   const handleCreate = async () => {
     const validOptions = getValidOptions();
@@ -104,23 +104,16 @@ export const QuestionManager = ({ questions, onUpdate }: Props) => {
     }
   };
 
-  const startEdit = (question: Question) => {
-    setEditing(question);
-    setFormData({
+  const handleStartEdit = (question: Question) => {
+    startEdit(question, (question) => ({
       text: question.text,
       options: [...question.options, ""],
       order: question.order,
-    });
-    setIsCreating(false);
+    }));
   };
 
-  const startCreate = () => {
-    setIsCreating(true);
-    setEditing(null);
-    setFormData({
-      ...createInitialFormData(),
-      order: questions.length,
-    });
+  const handleStartCreate = () => {
+    startCreate({ order: questions.length });
   };
 
   return (
@@ -129,7 +122,7 @@ export const QuestionManager = ({ questions, onUpdate }: Props) => {
         <h2 className="text-xl font-bold">質問管理</h2>
         <button
           className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600"
-          onClick={startCreate}
+          onClick={handleStartCreate}
         >
           新規質問作成
         </button>
@@ -137,27 +130,27 @@ export const QuestionManager = ({ questions, onUpdate }: Props) => {
 
       {/* 質問リスト */}
       <div className="space-y-4">
-        {questions.map((q) => (
-          <div key={q.id} className="border rounded p-4 bg-white shadow dark:bg-gray-800 dark:border-gray-700">
+        {questions.map((question) => (
+          <div key={question.id} className="border rounded p-4 bg-white shadow dark:bg-gray-800 dark:border-gray-700">
             <div className="flex justify-between items-start">
               <div className="flex-1">
-                <p className="font-bold mb-2">{q.text}</p>
+                <p className="font-bold mb-2">{question.text}</p>
                 <ul className="ml-4 text-sm text-gray-600 dark:text-gray-400">
-                  {q.options.map((opt, idx) => (
-                    <li key={idx}>・{opt}</li>
+                  {question.options.map((option, index) => (
+                    <li key={index}>・{option}</li>
                   ))}
                 </ul>
               </div>
               <div className="flex gap-2">
                 <button
                   className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
-                  onClick={() => startEdit(q)}
+                  onClick={() => handleStartEdit(question)}
                 >
                   編集
                 </button>
                 <button
                   className="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600"
-                  onClick={() => handleDelete(q.id)}
+                  onClick={() => handleDelete(question.id)}
                 >
                   削除
                 </button>
@@ -192,25 +185,25 @@ export const QuestionManager = ({ questions, onUpdate }: Props) => {
               <label className="block text-sm font-medium mb-1">
                 選択肢（最低2つ）
               </label>
-              {formData.options.map((opt, idx) => (
-                <div key={idx} className="mb-2 flex gap-2">
+              {formData.options.map((option, index) => (
+                <div key={index} className="mb-2 flex gap-2">
                   <input
                     type="text"
                     className="flex-1 border rounded px-3 py-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                    value={opt}
+                    value={option}
                     onChange={(e) => {
                       const newOptions = [...formData.options];
-                      newOptions[idx] = e.target.value;
+                      newOptions[index] = e.target.value;
                       setFormData({ ...formData, options: newOptions });
                     }}
-                    placeholder={`選択肢 ${idx + 1}`}
+                    placeholder={`選択肢 ${index + 1}`}
                   />
-                  {idx >= 2 && (
+                  {index >= 2 && (
                     <button
                       className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
                       onClick={() => {
                         const newOptions = formData.options.filter(
-                          (_, i) => i !== idx
+                          (_, i) => i !== index
                         );
                         setFormData({ ...formData, options: newOptions });
                       }}
