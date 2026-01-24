@@ -23,6 +23,19 @@ type BaseEntity = {
 };
 
 /**
+ * Firestore Timestampを Date に変換するヘルパー関数
+ */
+const convertTimestampToDate = (timestamp: unknown): Date => {
+  if (timestamp instanceof Date) {
+    return timestamp;
+  }
+  if (timestamp && typeof (timestamp as { toDate?: () => Date }).toDate === "function") {
+    return (timestamp as { toDate: () => Date }).toDate();
+  }
+  return new Date();
+};
+
+/**
  * Firestoreコレクションからドキュメントを作成
  */
 export const createDocument = async <T extends BaseEntity>(
@@ -73,10 +86,18 @@ export const getDocument = async <T extends BaseEntity>(
     return null;
   }
 
-  return {
+  const data = snapshot.data();
+  const result: Record<string, unknown> = {
     id: snapshot.id,
-    ...snapshot.data(),
-  } as T;
+    ...data,
+  };
+
+  // createdAt が存在する場合は Date に変換
+  if (data.createdAt) {
+    result.createdAt = convertTimestampToDate(data.createdAt);
+  }
+
+  return result as T;
 };
 
 /**
@@ -95,10 +116,20 @@ export const getCollection = async <T extends BaseEntity>(
 
   const snapshot = await getDocs(q);
 
-  return snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  })) as T[];
+  return snapshot.docs.map((doc) => {
+    const data = doc.data();
+    const result: Record<string, unknown> = {
+      id: doc.id,
+      ...data,
+    };
+
+    // createdAt が存在する場合は Date に変換
+    if (data.createdAt) {
+      result.createdAt = convertTimestampToDate(data.createdAt);
+    }
+
+    return result as T;
+  });
 };
 
 /**
