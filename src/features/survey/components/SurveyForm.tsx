@@ -33,6 +33,7 @@ type SurveyProgress = {
   userAnswers: Answer[];
   selectedOption: string | null;
   matchedPatternId: string | null;
+  currentQuestionAnswerId: string | null;
 };
 
 export const SurveyForm = ({ userId, userName }: Props) => {
@@ -67,17 +68,6 @@ export const SurveyForm = ({ userId, userName }: Props) => {
     }
   }, [storageKey]);
 
-  // 進捗を読み込み
-  const loadProgress = useCallback((): SurveyProgress | null => {
-    try {
-      const saved = localStorage.getItem(storageKey);
-      return saved ? JSON.parse(saved) : null;
-    } catch (error) {
-      console.error("Failed to load progress:", error);
-      return null;
-    }
-  }, [storageKey]);
-
   // 進捗をクリア
   const clearProgress = useCallback(() => {
     try {
@@ -87,6 +77,19 @@ export const SurveyForm = ({ userId, userName }: Props) => {
     }
   }, [storageKey]);
 
+  // userId が変更されたら状態をリセット
+  useEffect(() => {
+    setCurrentQuestionIndex(0);
+    setSelectedOption(null);
+    setShowResults(false);
+    setCompleted(false);
+    setUserAnswers([]);
+    setMatchedPattern(null);
+    setCurrentQuestionAnswer(null);
+    setFocusedOptionIndex(0);
+  }, [userId]);
+
+  // データ読み込み
   useEffect(() => {
     Promise.all([
       getQuestions(),
@@ -97,23 +100,6 @@ export const SurveyForm = ({ userId, userName }: Props) => {
         setQuestions(fetchedQuestions);
         setResultPatterns(fetchedPatterns);
         setQuestionAnswers(fetchedQuestionAnswers);
-
-        // 保存された進捗を復元
-        const savedProgress = loadProgress();
-        if (savedProgress) {
-          setCurrentQuestionIndex(savedProgress.currentQuestionIndex || 0);
-          setShowResults(savedProgress.showResults || false);
-          setCompleted(savedProgress.completed || false);
-          setUserAnswers(savedProgress.userAnswers || []);
-          setSelectedOption(savedProgress.selectedOption || null);
-          
-          // マッチしたパターンを復元
-          if (savedProgress.matchedPatternId && savedProgress.completed) {
-            const pattern = fetchedPatterns.find(p => p.id === savedProgress.matchedPatternId);
-            setMatchedPattern(pattern || null);
-          }
-        }
-
         setLoading(false);
       })
       .catch((error) => {
@@ -121,7 +107,86 @@ export const SurveyForm = ({ userId, userName }: Props) => {
         setLoadError(true);
         setLoading(false);
       });
-  }, [loadProgress]);
+  }, [userId]);
+
+  // 進捗復元（データ読み込み後、クライアントサイドのみで実行）
+  useEffect(() => {
+    // SSRでは実行しない（localStorageはクライアントのみ）
+    if (typeof window === 'undefined' || questions.length === 0) return;
+
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (!saved) return;
+
+      const savedProgress = JSON.parse(saved) as SurveyProgress;
+
+      // バリデーション: currentQuestionIndex が範囲内か
+      const restoredIndex =
+        typeof savedProgress.currentQuestionIndex === "number"
+          ? savedProgress.currentQuestionIndex
+          : 0;
+      const isIndexInRange =
+        restoredIndex >= 0 && restoredIndex < questions.length;
+
+      if (!isIndexInRange) {
+        console.warn("Invalid currentQuestionIndex in saved progress");
+        return;
+      }
+
+      // バリデーション: userAnswers が配列で、各要素が必須フィールドを持つか
+      const rawUserAnswers = Array.isArray(savedProgress.userAnswers)
+        ? savedProgress.userAnswers
+        : [];
+      const hasValidUserAnswers = rawUserAnswers.every((answer: any) => {
+        return (
+          answer &&
+          typeof answer === "object" &&
+          "userId" in answer &&
+          "userName" in answer &&
+          "questionId" in answer &&
+          "selectedOption" in answer
+        );
+      });
+
+      if (!hasValidUserAnswers) {
+        console.warn("Invalid userAnswers in saved progress");
+        return;
+      }
+
+      // 進捗を復元
+      setCurrentQuestionIndex(restoredIndex);
+      setShowResults(!!savedProgress.showResults);
+      setCompleted(!!savedProgress.completed);
+      setUserAnswers(rawUserAnswers);
+      setSelectedOption(
+        typeof savedProgress.selectedOption === "string"
+          ? savedProgress.selectedOption
+          : null
+      );
+
+      // マッチしたパターンを復元（存在する場合のみ）
+      if (savedProgress.completed && savedProgress.matchedPatternId != null) {
+        const pattern = resultPatterns.find(
+          (p) => p.id === savedProgress.matchedPatternId
+        );
+        if (pattern) {
+          setMatchedPattern(pattern);
+        }
+      }
+
+      // currentQuestionAnswer を復元
+      if (savedProgress.showResults && savedProgress.currentQuestionAnswerId != null) {
+        const questionAnswer = questionAnswers.find(
+          (qa) => qa.id === savedProgress.currentQuestionAnswerId
+        );
+        if (questionAnswer) {
+          setCurrentQuestionAnswer(questionAnswer);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to restore progress:", error);
+    }
+  }, [questions, resultPatterns, questionAnswers, storageKey]);
 
   const handleOptionSelect = async (option: string) => {
     // Prevent multiple simultaneous submissions
@@ -170,6 +235,7 @@ export const SurveyForm = ({ userId, userName }: Props) => {
         selectedOption: option,
         userAnswers: updatedAnswers,
         completed: false,
+        currentQuestionAnswerId: matchedQuestionAnswer?.id || null,
       });
     } catch (error) {
       setSubmitting(false);
@@ -195,39 +261,31 @@ export const SurveyForm = ({ userId, userName }: Props) => {
         selectedOption: null,
         userAnswers,
         completed: false,
+        currentQuestionAnswerId: null,
       });
     } else {
       // All questions completed - calculate result from locally stored answers
+      let pattern: ResultPattern | null = null;
       try {
-        const pattern = findMatchingPattern(userAnswers, resultPatterns);
+        pattern = findMatchingPattern(userAnswers, resultPatterns);
         setMatchedPattern(pattern);
-        setCompleted(true);
-
-        // 完了状態を保存
-        saveProgress({
-          currentQuestionIndex,
-          showResults: false,
-          selectedOption: null,
-          userAnswers,
-          completed: true,
-          matchedPatternId: pattern?.id || null,
-        });
       } catch (error) {
         console.error("Failed to calculate result pattern:", error);
         // Still show completion screen even if pattern matching fails
-        // User will see the default completion message
-        setCompleted(true);
-
-        // 完了状態を保存（パターンなし）
-        saveProgress({
-          currentQuestionIndex,
-          showResults: false,
-          selectedOption: null,
-          userAnswers,
-          completed: true,
-          matchedPatternId: null,
-        });
       }
+      
+      setCompleted(true);
+
+      // 完了状態を保存
+      saveProgress({
+        currentQuestionIndex,
+        showResults: false,
+        selectedOption: null,
+        userAnswers,
+        completed: true,
+        matchedPatternId: pattern?.id || null,
+        currentQuestionAnswerId: null,
+      });
     }
   };
 
