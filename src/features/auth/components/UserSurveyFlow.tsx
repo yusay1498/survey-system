@@ -9,9 +9,9 @@ import type { UserSurveyFlowProps } from "@/features/auth";
 
 export const UserSurveyFlow = ({ userId }: UserSurveyFlowProps) => {
   // useLocalStorageを使用してuserNameを永続化
-  const [userName, setUserName, , isLoading] = useLocalStorage<string | null>(
+  const [userName, setUserName, , isLoading] = useLocalStorage<string | undefined>(
     `user_name_${userId}`,
-    null
+    undefined
   );
 
   // localStorageから読み込み中はローディング画面を表示

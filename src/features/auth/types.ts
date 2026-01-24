@@ -41,6 +41,6 @@ export type UserSurveyFlowProps = {
  * 認証フックの戻り値
  */
 export type AuthState = {
-  user: FirebaseUser | null;
+  user: FirebaseUser | undefined;
   loading: boolean;
 };

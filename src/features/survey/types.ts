@@ -16,7 +16,7 @@ export type SurveyFormProps = {
  */
 export type PersonalityResultProps = {
   userAnswers: Answer[];
-  pattern: ResultPattern | null;
+  pattern: ResultPattern | undefined;
   questionAnswers: QuestionAnswer[];
   questions: Question[];
 };
@@ -43,9 +43,9 @@ export type SurveyProgress = {
   showResults: boolean;
   completed: boolean;
   userAnswers: Answer[];
-  selectedOption: string | null;
-  matchedPatternId: string | null;
-  currentQuestionAnswerId: string | null;
+  selectedOption: string | undefined;
+  matchedPatternId: string | undefined;
+  currentQuestionAnswerId: string | undefined;
 };
 
 /**
@@ -54,5 +54,5 @@ export type SurveyProgress = {
 export type AnswerDetail = {
   answer: Answer;
   question?: Question;
-  questionAnswer: QuestionAnswer | null;
+  questionAnswer: QuestionAnswer | undefined;
 };

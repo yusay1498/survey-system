@@ -11,13 +11,13 @@ import { useState, useCallback } from "react";
 export function useCRUDManager<T extends { id: string }, F>(
   createInitialFormData: () => F
 ) {
-  const [editing, setEditing] = useState<T | null>(null);
+  const [editing, setEditing] = useState<T | undefined>(undefined);
   const [isCreating, setIsCreating] = useState(false);
   const [formData, setFormData] = useState<F>(createInitialFormData());
 
   const resetForm = useCallback(() => {
     setFormData(createInitialFormData());
-    setEditing(null);
+    setEditing(undefined);
     setIsCreating(false);
   }, [createInitialFormData]);
 
@@ -33,7 +33,7 @@ export function useCRUDManager<T extends { id: string }, F>(
   const startCreate = useCallback(
     (defaultFormData?: Partial<F>) => {
       setIsCreating(true);
-      setEditing(null);
+      setEditing(undefined);
       setFormData({
         ...createInitialFormData(),
         ...defaultFormData,
