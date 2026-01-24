@@ -98,7 +98,9 @@ export const SurveyForm = ({ userId, userName }: Props) => {
         setCompleted(true);
       } catch (error) {
         console.error("Failed to fetch user answers:", error);
-        setCompleted(true); // Still show completion even if pattern matching fails
+        // Still show completion screen even if pattern matching fails
+        // User will see the default completion message
+        setCompleted(true);
       }
     }
   };

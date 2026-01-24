@@ -120,6 +120,18 @@
 
 ## Firebaseコンソールでの設定手順
 
+### 0. Firestore インデックスの作成（重要）
+結果パターンを正しく取得するため、以下のインデックスを作成してください：
+
+1. Firebase Console で「Firestore Database」→「インデックス」タブを選択
+2. 「インデックスを追加」をクリック
+3. 以下を設定:
+   - コレクション: `resultPatterns`
+   - フィールド1: `priority` - 降順
+   - クエリのスコープ: コレクション
+
+**注**: 現在の実装では単一フィールドのインデックスのみ必要です。複数orderBy句を避けることで、複雑な複合インデックス設定が不要になっています。
+
 ### 1. Firestoreコンソールにアクセス
 1. Firebase Console (https://console.firebase.google.com/) にログイン
 2. プロジェクトを選択
