@@ -36,9 +36,9 @@ export const SurveyForm = ({ userId, userName }: Props) => {
       getQuestions(),
       getResultPatterns()
     ])
-      .then(([q, patterns]) => {
-        setQuestions(q);
-        setResultPatterns(patterns);
+      .then(([fetchedQuestions, fetchedPatterns]) => {
+        setQuestions(fetchedQuestions);
+        setResultPatterns(fetchedPatterns);
         setLoading(false);
       })
       .catch((error) => {

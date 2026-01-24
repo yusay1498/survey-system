@@ -10,16 +10,16 @@ import { Answer } from "@/entities/answer";
 export const watchResults = (
   onChange: (answers: Answer[]) => void
 ) => {
-  const q = query(
+  const answersQuery = query(
     collection(firestore, "answers"),
     orderBy("createdAt", "asc")
   );
 
-  return onSnapshot(q, (snapshot) => {
-    const data: Answer[] = snapshot.docs.map((doc) => ({
+  return onSnapshot(answersQuery, (snapshot) => {
+    const answers: Answer[] = snapshot.docs.map((doc) => ({
       id: doc.id,
       ...(doc.data() as Omit<Answer, "id">),
     }));
-    onChange(data);
+    onChange(answers);
   });
 };

@@ -3,12 +3,12 @@ import { firestore } from "@/lib/firebase";
 import { Question } from "@/entities/question";
 
 export const getQuestions = async (): Promise<Question[]> => {
-  const q = query(
+  const questionsQuery = query(
     collection(firestore, "questions"),
     orderBy("order", "asc")
   );
 
-  const snapshot = await getDocs(q);
+  const snapshot = await getDocs(questionsQuery);
 
   return snapshot.docs.map((doc) => ({
     id: doc.id,

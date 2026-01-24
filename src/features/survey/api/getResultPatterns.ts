@@ -5,12 +5,12 @@ import { ResultPattern } from "@/entities/resultPattern";
 export const getResultPatterns = async (): Promise<ResultPattern[]> => {
   // Only order by priority to avoid composite index requirement
   // Sorting by conditions.length (specificity) will be done in matchResultPattern
-  const q = query(
+  const patternsQuery = query(
     collection(firestore, "resultPatterns"),
     orderBy("priority", "desc")
   );
 
-  const snapshot = await getDocs(q);
+  const snapshot = await getDocs(patternsQuery);
 
   return snapshot.docs.map((doc) => {
     const data = doc.data();
