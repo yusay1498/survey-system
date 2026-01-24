@@ -31,7 +31,7 @@ export const SurveyForm = ({ userId, userName }: SurveyFormProps) => {
   const [submitting, setSubmitting] = useState(false);
   const [completed, setCompleted] = useState(false);
   const [focusedOptionIndex, setFocusedOptionIndex] = useState(0);
-  const optionRefs = useRef<(HTMLButtonElement | undefined)[]>([]);
+  const optionRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const restoredUserIdRef = useRef<string | undefined>(undefined);
   const [userAnswers, setUserAnswers] = useState<Answer[]>([]);
   const [resultPatterns, setResultPatterns] = useState<ResultPattern[]>([]);
