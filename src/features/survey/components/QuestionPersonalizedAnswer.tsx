@@ -1,11 +1,7 @@
 "use client";
 
-import { QuestionAnswer } from "@/entities/questionAnswer";
 import { GradientCard } from "@/components/ui";
-
-type QuestionPersonalizedAnswerProps = {
-  questionAnswer: QuestionAnswer;
-};
+import type { QuestionPersonalizedAnswerProps } from "@/features/survey";
 
 export const QuestionPersonalizedAnswer = ({ questionAnswer }: QuestionPersonalizedAnswerProps) => {
   return (

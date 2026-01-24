@@ -1,8 +1,7 @@
 "use client";
 
 import { ResultPattern, ResultCondition } from "@/entities/resultPattern";
-import { Question } from "@/entities/question";
-import type { ResultPatternFormData } from "@/features/admin";
+import type { ResultPatternFormData, ResultPatternManagerProps } from "@/features/admin";
 import {
   createResultPattern,
   updateResultPattern,
@@ -18,12 +17,6 @@ import {
   CONFIRMATION_MESSAGES,
   ERROR_MESSAGES,
 } from "@/lib/constants";
-
-type ResultPatternManagerProps = {
-  patterns: ResultPattern[];
-  questions: Question[];
-  onUpdate: () => void;
-};
 
 const createInitialFormData = (): ResultPatternFormData => ({
   name: "",

@@ -6,12 +6,8 @@ import { getQuestionAnswers } from "../api/getQuestionAnswers";
 import { findMatchingQuestionAnswer } from "../lib/matchQuestionAnswer";
 import { QuestionPersonalizedAnswer } from "./QuestionPersonalizedAnswer";
 import { Answer } from "@/entities/answer";
-import { Question } from "@/entities/question";
 import { QuestionAnswer } from "@/entities/questionAnswer";
-
-type ResultListProps = {
-  questions: Question[];
-};
+import type { ResultListProps } from "@/features/survey";
 
 export const ResultList = ({ questions }: ResultListProps) => {
   const [answers, setAnswers] = useState<Answer[]>([]);

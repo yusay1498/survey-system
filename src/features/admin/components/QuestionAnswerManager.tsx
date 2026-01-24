@@ -1,8 +1,7 @@
 "use client";
 
 import { QuestionAnswer } from "@/entities/questionAnswer";
-import { Question } from "@/entities/question";
-import type { QuestionAnswerFormData } from "@/features/admin";
+import type { QuestionAnswerFormData, QuestionAnswerManagerProps } from "@/features/admin";
 import {
   createQuestionAnswer,
   updateQuestionAnswer,
@@ -18,12 +17,6 @@ import {
   CONFIRMATION_MESSAGES,
   ERROR_MESSAGES,
 } from "@/lib/constants";
-
-type QuestionAnswerManagerProps = {
-  questionAnswers: QuestionAnswer[];
-  questions: Question[];
-  onUpdate: () => void;
-};
 
 const createInitialFormData = (): QuestionAnswerFormData => ({
   questionId: "",

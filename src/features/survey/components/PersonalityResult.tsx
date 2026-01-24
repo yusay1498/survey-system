@@ -1,18 +1,8 @@
 "use client";
 
-import { Answer } from "@/entities/answer";
-import { ResultPattern } from "@/entities/resultPattern";
-import { QuestionAnswer } from "@/entities/questionAnswer";
-import { Question } from "@/entities/question";
 import { findMatchingQuestionAnswer } from "../lib/matchQuestionAnswer";
 import { GradientCard } from "@/components/ui";
-
-type PersonalityResultProps = {
-  userAnswers: Answer[];
-  pattern: ResultPattern | null;
-  questionAnswers: QuestionAnswer[];
-  questions: Question[];
-};
+import type { PersonalityResultProps } from "@/features/survey";
 
 export const PersonalityResult = ({ userAnswers, pattern, questionAnswers, questions }: PersonalityResultProps) => {
   // 各質問に対するパーソナライズな回答を取得

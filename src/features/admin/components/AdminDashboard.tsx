@@ -13,12 +13,7 @@ import { ResultList } from "@/features/survey/components/ResultList";
 import { AdminHeader } from "./AdminHeader";
 import { useAsyncData } from "@/utils";
 import { Spinner } from "@/components/ui";
-
-type AdminDashboardProps = {
-  userEmail: string | null;
-  userId: string;
-  onLogout: () => void;
-};
+import type { AdminDashboardProps } from "@/features/admin";
 
 export const AdminDashboard = ({ userEmail, userId, onLogout }: AdminDashboardProps) => {
   const {

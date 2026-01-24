@@ -5,10 +5,7 @@ import { SurveyForm } from "@/features/survey/components/SurveyForm";
 import { saveUser } from "../api/saveUser";
 import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
 import { LoadingScreen } from "@/components/ui";
-
-type UserSurveyFlowProps = {
-  userId: string;
-};
+import type { UserSurveyFlowProps } from "@/features/auth";
 
 export const UserSurveyFlow = ({ userId }: UserSurveyFlowProps) => {
   // useLocalStorageを使用してuserNameを永続化

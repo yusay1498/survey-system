@@ -19,22 +19,7 @@ import {
 } from "@/features/survey";
 import { handleError, confirmAction } from "@/utils";
 import { CONFIRMATION_MESSAGES, ERROR_MESSAGES, BASE_PATH } from "@/lib/constants";
-
-type SurveyFormProps = {
-  userId: string;
-  userName: string;
-};
-
-// LocalStorageに保存する進捗データの型
-type SurveyProgress = {
-  currentQuestionIndex: number;
-  showResults: boolean;
-  completed: boolean;
-  userAnswers: Answer[];
-  selectedOption: string | null;
-  matchedPatternId: string | null;
-  currentQuestionAnswerId: string | null;
-};
+import type { SurveyFormProps, SurveyProgress } from "@/features/survey";
 
 export const SurveyForm = ({ userId, userName }: SurveyFormProps) => {
   const [questions, setQuestions] = useState<Question[]>([]);

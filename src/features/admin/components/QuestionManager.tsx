@@ -2,7 +2,7 @@
 
 import { Question } from "@/entities/question";
 import { createQuestion, updateQuestion, deleteQuestion } from "@/features/admin";
-import type { QuestionFormData } from "@/features/admin";
+import type { QuestionFormData, QuestionManagerProps } from "@/features/admin";
 import {
   validateQuestionForm,
   handleError,
@@ -14,11 +14,6 @@ import {
   ERROR_MESSAGES,
   UI_CONSTANTS,
 } from "@/lib/constants";
-
-type QuestionManagerProps = {
-  questions: Question[];
-  onUpdate: () => void;
-};
 
 const createInitialFormData = (): QuestionFormData => ({
   text: "",
