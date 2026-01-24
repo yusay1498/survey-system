@@ -4,9 +4,16 @@ import { useEffect, useState, useCallback, useRef } from "react";
  * 非同期データの読み込み状態を管理するフック
  * 
  * @template T - データの型
- * @param fetcher - データを取得する非同期関数
+ * @param fetcher - データを取得する非同期関数。呼び出し側で変更したくない場合はuseCallbackでメモ化してください
  * @param dependencies - useEffectの依存配列（省略時は初回のみ実行）
  * @returns データ、ローディング状態、エラー状態、リフレッシュ関数
+ * 
+ * @example
+ * // 初回のみ実行（dependenciesを省略）
+ * const { data } = useAsyncData(() => getQuestions());
+ * 
+ * // userIdが変更されたら再実行
+ * const { data } = useAsyncData(() => getUserData(userId), [userId]);
  */
 export function useAsyncData<T>(
   fetcher: () => Promise<T>,
