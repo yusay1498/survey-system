@@ -387,12 +387,13 @@ export const ResultPatternManager = ({ patterns, questions, onUpdate }: Props) =
                   type="number"
                   className="w-full border rounded px-3 py-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                   value={formData.priority}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    const value = parseInt(e.target.value, 10);
                     setFormData({
                       ...formData,
-                      priority: parseInt(e.target.value) || 0,
-                    })
-                  }
+                      priority: isNaN(value) ? formData.priority : value,
+                    });
+                  }}
                 />
                 <p className="text-xs text-gray-500 mt-1 dark:text-gray-400">
                   高い方が優先してマッチします
@@ -407,12 +408,13 @@ export const ResultPatternManager = ({ patterns, questions, onUpdate }: Props) =
                   type="number"
                   className="w-full border rounded px-3 py-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                   value={formData.order}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    const value = parseInt(e.target.value, 10);
                     setFormData({
                       ...formData,
-                      order: parseInt(e.target.value) || 0,
-                    })
-                  }
+                      order: isNaN(value) ? formData.order : value,
+                    });
+                  }}
                 />
               </div>
             </div>
