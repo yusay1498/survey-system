@@ -186,9 +186,9 @@ export const QuestionAnswerManager = ({ questionAnswers, questions, onUpdate }: 
                 </p>
               ) : (
                 <div className="space-y-3">
-                  {answers.map((qa) => (
+                  {answers.map((questionAnswer) => (
                     <div
-                      key={qa.id}
+                      key={questionAnswer.id}
                       className="border rounded p-3 bg-gray-50 dark:bg-gray-700 dark:border-gray-600"
                     >
                       <div className="flex justify-between items-start">
