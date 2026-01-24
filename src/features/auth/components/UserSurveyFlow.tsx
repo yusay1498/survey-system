@@ -1,16 +1,20 @@
 "use client";
 
-import { useState } from "react";
 import { NameInput } from "./NameInput";
 import { SurveyForm } from "@/features/survey/components/SurveyForm";
 import { saveUser } from "../api/saveUser";
+import { useLocalStorage } from "@/utils/hooks/useLocalStorage";
 
 type Props = {
   userId: string;
 };
 
 export const UserSurveyFlow = ({ userId }: Props) => {
-  const [userName, setUserName] = useState<string | null>(null);
+  // useLocalStorageを使用してuserNameを永続化
+  const [userName, setUserName] = useLocalStorage<string | null>(
+    `user_name_${userId}`,
+    null
+  );
 
   if (!userName) {
     return (
