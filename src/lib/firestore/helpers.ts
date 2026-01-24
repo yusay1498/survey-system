@@ -15,9 +15,17 @@ import {
 import { db } from "@/lib/firebase";
 
 /**
+ * エンティティの基本型
+ */
+type BaseEntity = {
+  id: string;
+  createdAt?: Date;
+};
+
+/**
  * Firestoreコレクションからドキュメントを作成
  */
-export const createDocument = async <T extends DocumentData>(
+export const createDocument = async <T extends BaseEntity>(
   collectionName: string,
   data: Omit<T, "id" | "createdAt">
 ): Promise<string> => {
@@ -31,13 +39,13 @@ export const createDocument = async <T extends DocumentData>(
 /**
  * Firestoreドキュメントを更新
  */
-export const updateDocument = async <T extends DocumentData>(
+export const updateDocument = async <T extends BaseEntity>(
   collectionName: string,
   id: string,
   data: Partial<Omit<T, "id" | "createdAt">>
 ): Promise<void> => {
   const docRef = doc(db, collectionName, id);
-  await updateDoc(docRef, data);
+  await updateDoc(docRef, data as DocumentData);
 };
 
 /**
@@ -54,7 +62,7 @@ export const deleteDocument = async (
 /**
  * Firestoreドキュメントを取得
  */
-export const getDocument = async <T>(
+export const getDocument = async <T extends BaseEntity>(
   collectionName: string,
   id: string
 ): Promise<T | null> => {
@@ -74,7 +82,7 @@ export const getDocument = async <T>(
 /**
  * Firestoreコレクション全体を取得（orderByあり）
  */
-export const getCollection = async <T>(
+export const getCollection = async <T extends BaseEntity>(
   collectionName: string,
   orderByField?: string,
   orderDirection: "asc" | "desc" = "asc"
