@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 
 /**
  * 非同期データの読み込み状態を管理するフック
@@ -15,23 +15,48 @@ export function useAsyncData<T>(
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
+    // 前回のリクエストをキャンセル
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    // 新しいAbortControllerを作成
+    abortControllerRef.current = new AbortController();
+
     try {
       setLoading(true);
       setError(null);
       const result = await fetcher();
-      setData(result);
+      
+      // リクエストがキャンセルされていない場合のみ状態を更新
+      if (!abortControllerRef.current.signal.aborted) {
+        setData(result);
+      }
     } catch (err) {
-      setError(err instanceof Error ? err : new Error(String(err)));
-      console.error("Failed to load data:", err);
+      // キャンセルエラーは無視
+      if (!abortControllerRef.current.signal.aborted) {
+        setError(err instanceof Error ? err : new Error(String(err)));
+        console.error("Failed to load data:", err);
+      }
     } finally {
-      setLoading(false);
+      if (!abortControllerRef.current.signal.aborted) {
+        setLoading(false);
+      }
     }
-  };
+  }, [fetcher]);
 
   useEffect(() => {
     loadData();
+    
+    // クリーンアップ: コンポーネントのアンマウント時に実行中のリクエストをキャンセル
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, dependencies);
 
