@@ -4,12 +4,16 @@ import { useEffect, useState, useRef } from "react";
 import { Question } from "@/entities/question";
 import { Answer } from "@/entities/answer";
 import { ResultPattern } from "@/entities/resultPattern";
+import { QuestionAnswer } from "@/entities/questionAnswer";
 import { ResultList } from "./ResultList";
 import { PersonalityResult } from "./PersonalityResult";
+import { QuestionPersonalizedAnswer } from "./QuestionPersonalizedAnswer";
 import { getQuestions } from "../api/getQuestions";
 import { submitAnswer } from "../api/submitAnswer";
 import { getResultPatterns } from "../api/getResultPatterns";
+import { getQuestionAnswers } from "../api/getQuestionAnswers";
 import { findMatchingPattern } from "../lib/matchResultPattern";
+import { findMatchingQuestionAnswer } from "../lib/matchQuestionAnswer";
 
 type Props = {
   userId: string;
@@ -30,15 +34,19 @@ export const SurveyForm = ({ userId, userName }: Props) => {
   const [userAnswers, setUserAnswers] = useState<Answer[]>([]);
   const [resultPatterns, setResultPatterns] = useState<ResultPattern[]>([]);
   const [matchedPattern, setMatchedPattern] = useState<ResultPattern | null>(null);
+  const [questionAnswers, setQuestionAnswers] = useState<QuestionAnswer[]>([]);
+  const [currentQuestionAnswer, setCurrentQuestionAnswer] = useState<QuestionAnswer | null>(null);
 
   useEffect(() => {
     Promise.all([
       getQuestions(),
-      getResultPatterns()
+      getResultPatterns(),
+      getQuestionAnswers()
     ])
-      .then(([fetchedQuestions, fetchedPatterns]) => {
+      .then(([fetchedQuestions, fetchedPatterns, fetchedQuestionAnswers]) => {
         setQuestions(fetchedQuestions);
         setResultPatterns(fetchedPatterns);
+        setQuestionAnswers(fetchedQuestionAnswers);
         setLoading(false);
       })
       .catch((error) => {
@@ -82,6 +90,14 @@ export const SurveyForm = ({ userId, userName }: Props) => {
       // Store answer in state to avoid race condition when matching patterns
       setUserAnswers(prev => [...prev, { ...newAnswer, id: `${userId}-${currentQuestion.id}` }]);
 
+      // 質問ごとのパーソナライズな回答を検索
+      const matchedQuestionAnswer = findMatchingQuestionAnswer(
+        currentQuestion.id,
+        option,
+        questionAnswers
+      );
+      setCurrentQuestionAnswer(matchedQuestionAnswer);
+
       setSubmitting(false);
       setShowResults(true);
     } catch (error) {
@@ -97,6 +113,7 @@ export const SurveyForm = ({ userId, userName }: Props) => {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setSelectedOption(null);
       setShowResults(false);
+      setCurrentQuestionAnswer(null); // リセット
       setFocusedOptionIndex(0); // Reset focus for next question
       optionRefs.current = []; // Clear refs for next question
     } else {
@@ -173,7 +190,12 @@ export const SurveyForm = ({ userId, userName }: Props) => {
   if (completed) {
     return (
       <div className="space-y-6">
-        <PersonalityResult userAnswers={userAnswers} pattern={matchedPattern} />
+        <PersonalityResult 
+          userAnswers={userAnswers} 
+          pattern={matchedPattern}
+          questionAnswers={questionAnswers}
+          questions={questions}
+        />
         
         <div className="border-t-2 border-gray-300 dark:border-gray-600 pt-6">
           <h3 className="text-xl font-bold mb-4 text-gray-800 dark:text-gray-200">
@@ -242,6 +264,11 @@ export const SurveyForm = ({ userId, userName }: Props) => {
               あなたの回答: {selectedOption}
             </p>
           </div>
+
+          {/* 質問ごとのパーソナライズな回答を表示 */}
+          {currentQuestionAnswer && (
+            <QuestionPersonalizedAnswer questionAnswer={currentQuestionAnswer} />
+          )}
 
           <div>
             <h3 className="text-lg font-bold mb-3">この質問の集計結果</h3>
