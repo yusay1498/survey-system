@@ -2,9 +2,15 @@
 
 import { useEffect, useState, useRef } from "react";
 import { Question } from "@/entities/question";
+import { Answer } from "@/entities/answer";
+import { ResultPattern } from "@/entities/resultPattern";
 import { ResultList } from "./ResultList";
+import { PersonalityResult } from "./PersonalityResult";
 import { getQuestions } from "../api/getQuestions";
 import { submitAnswer } from "../api/submitAnswer";
+import { getUserAnswers } from "../api/getUserAnswers";
+import { getResultPatterns } from "../api/getResultPatterns";
+import { findMatchingPattern } from "../lib/matchResultPattern";
 
 type Props = {
   userId: string;
@@ -21,10 +27,17 @@ export const SurveyForm = ({ userId, userName }: Props) => {
   const [completed, setCompleted] = useState(false);
   const [focusedOptionIndex, setFocusedOptionIndex] = useState(0);
   const optionRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const [userAnswers, setUserAnswers] = useState<Answer[]>([]);
+  const [resultPatterns, setResultPatterns] = useState<ResultPattern[]>([]);
+  const [matchedPattern, setMatchedPattern] = useState<ResultPattern | null>(null);
 
   useEffect(() => {
-    getQuestions().then((q) => {
+    Promise.all([
+      getQuestions(),
+      getResultPatterns()
+    ]).then(([q, patterns]) => {
       setQuestions(q);
+      setResultPatterns(patterns);
       setLoading(false);
     });
   }, []);
@@ -68,7 +81,7 @@ export const SurveyForm = ({ userId, userName }: Props) => {
     }
   };
 
-  const handleNextQuestion = () => {
+  const handleNextQuestion = async () => {
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setSelectedOption(null);
@@ -76,7 +89,17 @@ export const SurveyForm = ({ userId, userName }: Props) => {
       setFocusedOptionIndex(0); // Reset focus for next question
       optionRefs.current = []; // Clear refs for next question
     } else {
-      setCompleted(true);
+      // All questions completed - fetch user's answers and calculate result
+      try {
+        const answers = await getUserAnswers(userId);
+        setUserAnswers(answers);
+        const pattern = findMatchingPattern(answers, resultPatterns);
+        setMatchedPattern(pattern);
+        setCompleted(true);
+      } catch (error) {
+        console.error("Failed to fetch user answers:", error);
+        setCompleted(true); // Still show completion even if pattern matching fails
+      }
     }
   };
 
@@ -122,7 +145,14 @@ export const SurveyForm = ({ userId, userName }: Props) => {
   if (completed) {
     return (
       <div className="space-y-6">
-        <ResultList questions={questions} />
+        <PersonalityResult userAnswers={userAnswers} pattern={matchedPattern} />
+        
+        <div className="border-t-2 border-gray-300 dark:border-gray-600 pt-6">
+          <h3 className="text-xl font-bold mb-4 text-gray-800 dark:text-gray-200">
+            全体の集計結果
+          </h3>
+          <ResultList questions={questions} />
+        </div>
       </div>
     );
   }
