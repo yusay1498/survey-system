@@ -16,5 +16,5 @@ const firebaseConfig = {
 // 🔑 App Router + HMR 対策
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
-export const firebaseAuth = getAuth(app);
-export const firestore = getFirestore(app);
+export const auth = getAuth(app);
+export const db = getFirestore(app);

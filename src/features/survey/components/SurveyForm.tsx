@@ -9,12 +9,16 @@ import { ResultList } from "./ResultList";
 import { PersonalityResult } from "./PersonalityResult";
 import { QuestionPersonalizedAnswer } from "./QuestionPersonalizedAnswer";
 import { Spinner } from "@/components/ui";
-import { getQuestions } from "../api/getQuestions";
-import { submitAnswer } from "../api/submitAnswer";
-import { getResultPatterns } from "../api/getResultPatterns";
-import { getQuestionAnswers } from "../api/getQuestionAnswers";
-import { findMatchingPattern } from "../lib/matchResultPattern";
-import { findMatchingQuestionAnswer } from "../lib/matchQuestionAnswer";
+import {
+  getQuestions,
+  submitAnswer,
+  getResultPatterns,
+  getQuestionAnswers,
+  findMatchingPattern,
+  findMatchingQuestionAnswer,
+} from "@/features/survey";
+import { handleError, confirmAction } from "@/utils";
+import { CONFIRMATION_MESSAGES, ERROR_MESSAGES } from "@/lib/constants";
 
 type Props = {
   userId: string;
@@ -59,16 +63,10 @@ export const SurveyForm = ({ userId, userName }: Props) => {
 
   const handleOptionSelect = async (option: string) => {
     // Prevent multiple simultaneous submissions
-    if (submitting) {
-      return;
-    }
+    if (submitting) return;
 
     // Confirmation dialog before submission
-    const confirmSubmit = window.confirm(
-      `「${option}」を選択して回答を送信しますか？\n\n送信後は変更できません。`
-    );
-    
-    if (!confirmSubmit) {
+    if (!confirmAction(CONFIRMATION_MESSAGES.SUBMIT_ANSWER(option))) {
       return;
     }
 
@@ -102,10 +100,9 @@ export const SurveyForm = ({ userId, userName }: Props) => {
       setSubmitting(false);
       setShowResults(true);
     } catch (error) {
-      console.error("Failed to submit answer:", error);
       setSubmitting(false);
       setSelectedOption(null); // Reset selection to allow retry
-      alert("回答の送信に失敗しました。もう一度お試しください。");
+      handleError("Failed to submit answer", error, ERROR_MESSAGES.SUBMIT_ANSWER_FAILED);
     }
   };
 

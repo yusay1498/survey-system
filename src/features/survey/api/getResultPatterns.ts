@@ -1,12 +1,13 @@
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
-import { firestore } from "@/lib/firebase";
+import { db } from "@/lib/firebase";
 import { ResultPattern } from "@/entities/resultPattern";
+import { COLLECTIONS } from "@/lib/constants";
 
 export const getResultPatterns = async (): Promise<ResultPattern[]> => {
   // Only order by priority to avoid composite index requirement
   // Sorting by conditions.length (specificity) will be done in matchResultPattern
   const patternsQuery = query(
-    collection(firestore, "resultPatterns"),
+    collection(db, COLLECTIONS.RESULT_PATTERNS),
     orderBy("priority", "desc")
   );
 

@@ -1,7 +1,6 @@
-import { doc, deleteDoc } from "firebase/firestore";
-import { firestore } from "@/lib/firebase";
+import { deleteDocument } from "@/lib/firestore/helpers";
+import { COLLECTIONS } from "@/lib/constants";
 
 export const deleteQuestion = async (questionId: string): Promise<void> => {
-  const questionRef = doc(firestore, "questions", questionId);
-  await deleteDoc(questionRef);
+  await deleteDocument(COLLECTIONS.QUESTIONS, questionId);
 };

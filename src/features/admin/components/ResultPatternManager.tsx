@@ -3,9 +3,20 @@
 import { useState } from "react";
 import { ResultPattern, ResultCondition } from "@/entities/resultPattern";
 import { Question } from "@/entities/question";
-import { createResultPattern } from "../api/createResultPattern";
-import { updateResultPattern } from "../api/updateResultPattern";
-import { deleteResultPattern } from "../api/deleteResultPattern";
+import {
+  createResultPattern,
+  updateResultPattern,
+  deleteResultPattern,
+} from "@/features/admin";
+import {
+  validateResultPatternForm,
+  handleError,
+  confirmAction,
+} from "@/utils";
+import {
+  CONFIRMATION_MESSAGES,
+  ERROR_MESSAGES,
+} from "@/lib/constants";
 
 type Props = {
   patterns: ResultPattern[];
@@ -22,39 +33,35 @@ type FormData = {
   order: number;
 };
 
+const createInitialFormData = (): FormData => ({
+  name: "",
+  message: "",
+  description: "",
+  conditions: [{ questionId: "", selectedOption: "" }],
+  priority: 10,
+  order: 0,
+});
+
 export const ResultPatternManager = ({ patterns, questions, onUpdate }: Props) => {
   const [editing, setEditing] = useState<ResultPattern | null>(null);
   const [isCreating, setIsCreating] = useState(false);
-  const [formData, setFormData] = useState<FormData>({
-    name: "",
-    message: "",
-    description: "",
-    conditions: [{ questionId: "", selectedOption: "" }],
-    priority: 10,
-    order: 0,
-  });
+  const [formData, setFormData] = useState<FormData>(createInitialFormData());
 
   const resetForm = () => {
-    setFormData({
-      name: "",
-      message: "",
-      description: "",
-      conditions: [{ questionId: "", selectedOption: "" }],
-      priority: 10,
-      order: 0,
-    });
+    setFormData(createInitialFormData());
     setEditing(null);
     setIsCreating(false);
   };
 
   const validateForm = (): ResultCondition[] | null => {
-    if (!formData.name.trim()) {
-      alert("結果パターン名を入力してください");
-      return null;
-    }
-    
-    if (!formData.message.trim()) {
-      alert("メッセージを入力してください");
+    const nameValidationError = validateResultPatternForm(
+      formData.name,
+      formData.message,
+      formData.conditions.length
+    );
+
+    if (nameValidationError) {
+      alert(nameValidationError);
       return null;
     }
 
@@ -109,15 +116,16 @@ export const ResultPatternManager = ({ patterns, questions, onUpdate }: Props) =
       resetForm();
       onUpdate();
     } catch (error) {
-      console.error("結果パターンの作成に失敗しました:", error);
-      alert("結果パターンの作成に失敗しました。もう一度お試しください。");
+      handleError(
+        "結果パターンの作成に失敗しました",
+        error,
+        ERROR_MESSAGES.CREATE_RESULT_PATTERN_FAILED
+      );
     }
   };
 
   const handleUpdate = async () => {
-    if (!editing) {
-      return;
-    }
+    if (!editing) return;
 
     const validConditions = validateForm();
     if (!validConditions) return;
@@ -136,20 +144,26 @@ export const ResultPatternManager = ({ patterns, questions, onUpdate }: Props) =
       resetForm();
       onUpdate();
     } catch (error) {
-      console.error("結果パターンの更新に失敗しました:", error);
-      alert("結果パターンの更新に失敗しました。もう一度お試しください。");
+      handleError(
+        "結果パターンの更新に失敗しました",
+        error,
+        ERROR_MESSAGES.UPDATE_RESULT_PATTERN_FAILED
+      );
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("この結果パターンを削除しますか？")) return;
+    if (!confirmAction(CONFIRMATION_MESSAGES.DELETE_RESULT_PATTERN)) return;
 
     try {
       await deleteResultPattern(id);
       onUpdate();
     } catch (error) {
-      console.error("結果パターンの削除に失敗しました:", error);
-      alert("結果パターンの削除に失敗しました。もう一度お試しください。");
+      handleError(
+        "結果パターンの削除に失敗しました",
+        error,
+        ERROR_MESSAGES.DELETE_RESULT_PATTERN_FAILED
+      );
     }
   };
 
