@@ -3,8 +3,8 @@ import { useState, useCallback } from "react";
 /**
  * CRUD操作の共通状態管理フック
  * 
- * @template T - エンティティの型
- * @template F - フォームデータの型
+ * @template T - エンティティの型。必ず`id: string`プロパティを持つ必要があります
+ * @template F - フォームデータの型。編集・作成に使用されるフォームの形状を定義します
  * @param createInitialFormData - フォームの初期値を作成する関数
  * @returns CRUD操作に必要な状態と関数
  */

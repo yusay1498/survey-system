@@ -2,6 +2,7 @@
 
 import { Question } from "@/entities/question";
 import { createQuestion, updateQuestion, deleteQuestion } from "@/features/admin";
+import type { QuestionFormData } from "@/features/admin";
 import {
   validateQuestionForm,
   handleError,
@@ -17,12 +18,6 @@ import {
 type Props = {
   questions: Question[];
   onUpdate: () => void;
-};
-
-type QuestionFormData = {
-  text: string;
-  options: string[];
-  order: number;
 };
 
 const createInitialFormData = (): QuestionFormData => ({

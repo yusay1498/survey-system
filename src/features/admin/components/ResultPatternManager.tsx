@@ -2,6 +2,7 @@
 
 import { ResultPattern, ResultCondition } from "@/entities/resultPattern";
 import { Question } from "@/entities/question";
+import type { ResultPatternFormData } from "@/features/admin";
 import {
   createResultPattern,
   updateResultPattern,
@@ -22,15 +23,6 @@ type Props = {
   patterns: ResultPattern[];
   questions: Question[];
   onUpdate: () => void;
-};
-
-type ResultPatternFormData = {
-  name: string;
-  message: string;
-  description: string;
-  conditions: ResultCondition[];
-  priority: number;
-  order: number;
 };
 
 const createInitialFormData = (): ResultPatternFormData => ({

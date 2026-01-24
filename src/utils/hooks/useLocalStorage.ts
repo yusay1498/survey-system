@@ -32,16 +32,19 @@ export function useLocalStorage<T>(
   const setValue = useCallback(
     (value: T | ((prev: T) => T)) => {
       try {
-        const valueToStore = value instanceof Function ? value(storedValue) : value;
-        setStoredValue(valueToStore);
-        if (isClient) {
-          window.localStorage.setItem(key, JSON.stringify(valueToStore));
-        }
+        // storedValueは関数内で直接参照するため、依存配列には含めない
+        setStoredValue((prevValue) => {
+          const valueToStore = value instanceof Function ? value(prevValue) : value;
+          if (isClient) {
+            window.localStorage.setItem(key, JSON.stringify(valueToStore));
+          }
+          return valueToStore;
+        });
       } catch (error) {
         console.error(`Error saving localStorage key "${key}":`, error);
       }
     },
-    [key, storedValue, isClient]
+    [key, isClient]
   );
 
   // 値をクリアする関数

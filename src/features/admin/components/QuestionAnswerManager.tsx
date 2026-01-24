@@ -2,6 +2,7 @@
 
 import { QuestionAnswer, QuestionAnswerCondition } from "@/entities/questionAnswer";
 import { Question } from "@/entities/question";
+import type { QuestionAnswerFormData } from "@/features/admin";
 import {
   createQuestionAnswer,
   updateQuestionAnswer,
@@ -22,15 +23,6 @@ type Props = {
   questionAnswers: QuestionAnswer[];
   questions: Question[];
   onUpdate: () => void;
-};
-
-type QuestionAnswerFormData = {
-  questionId: string;
-  name: string;
-  message: string;
-  description: string;
-  condition: QuestionAnswerCondition;
-  order: number;
 };
 
 const createInitialFormData = (): QuestionAnswerFormData => ({

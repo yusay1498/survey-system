@@ -57,6 +57,8 @@ export function useAsyncData<T>(
         abortControllerRef.current.abort();
       }
     };
+    // dependencies配列は意図的に渡された依存関係を使用
+    // この警告は誤検知のため無効化
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, dependencies);
 
