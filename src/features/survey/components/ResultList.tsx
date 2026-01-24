@@ -47,29 +47,29 @@ export const ResultList = ({ questions }: Props) => {
 
   return (
     <div className="space-y-6">
-      {questions.map((q) => {
-        const related = answers.filter(
-          (a) => a.questionId === q.id
+      {questions.map((question) => {
+        const relatedAnswers = answers.filter(
+          (answer) => answer.questionId === question.id
         );
 
         return (
-          <div key={q.id} className="border rounded p-4 dark:border-gray-700 dark:bg-gray-800">
-            <h3 className="font-bold mb-2">{q.text}</h3>
+          <div key={question.id} className="border rounded p-4 dark:border-gray-700 dark:bg-gray-800">
+            <h3 className="font-bold mb-2">{question.text}</h3>
 
-            {q.options.map((opt) => {
-              const picked = related.filter(
-                (a) => a.selectedOption === opt
+            {question.options.map((option) => {
+              const selectedAnswers = relatedAnswers.filter(
+                (answer) => answer.selectedOption === option
               );
 
               // この選択肢に対応するパーソナライズな回答を取得
               const matchedQuestionAnswer = loading
                 ? null
-                : findMatchingQuestionAnswer(q.id, opt, questionAnswers);
+                : findMatchingQuestionAnswer(question.id, option, questionAnswers);
 
               return (
-                <div key={opt} className="mb-4">
+                <div key={option} className="mb-4">
                   <span className="font-medium">
-                    {opt}（{picked.length}）
+                    {option}（{selectedAnswers.length}）
                   </span>
 
                   {/* パーソナライズな回答結果を表示 */}
@@ -80,8 +80,8 @@ export const ResultList = ({ questions }: Props) => {
                   )}
 
                   <ul className="ml-4 text-sm text-gray-600 dark:text-gray-400 mt-2">
-                    {picked.map((p) => (
-                      <li key={p.id}>・{p.userName}</li>
+                    {selectedAnswers.map((answer) => (
+                      <li key={answer.id}>・{answer.userName}</li>
                     ))}
                   </ul>
                 </div>

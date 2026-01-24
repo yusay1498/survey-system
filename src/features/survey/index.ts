@@ -14,3 +14,13 @@ export { SurveyForm } from "./components/SurveyForm";
 // Survey Lib exports
 export { findMatchingQuestionAnswer } from "./lib/matchQuestionAnswer";
 export { findMatchingPattern } from "./lib/matchResultPattern";
+
+// Survey Types exports
+export type {
+  SurveyFormProps,
+  PersonalityResultProps,
+  QuestionPersonalizedAnswerProps,
+  ResultListProps,
+  SurveyProgress,
+  AnswerDetail,
+} from "./types";

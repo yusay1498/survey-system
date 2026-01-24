@@ -5,6 +5,7 @@ import { ResultPattern } from "@/entities/resultPattern";
 import { QuestionAnswer } from "@/entities/questionAnswer";
 import { Question } from "@/entities/question";
 import { findMatchingQuestionAnswer } from "../lib/matchQuestionAnswer";
+import { GradientCard } from "@/components/ui";
 
 type Props = {
   userAnswers: Answer[];
@@ -62,7 +63,7 @@ export const PersonalityResult = ({ userAnswers, pattern, questionAnswers, quest
                       {detail.question.text}
                     </p>
                   )}
-                  <div className="p-4 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg text-white shadow-md">
+                  <GradientCard variant="gradient-blue" className="p-4">
                     <h4 className="text-lg font-bold mb-1">{detail.questionAnswer.name}</h4>
                     <p className="text-sm leading-relaxed">{detail.questionAnswer.message}</p>
                     {detail.questionAnswer.description && (
@@ -70,7 +71,7 @@ export const PersonalityResult = ({ userAnswers, pattern, questionAnswers, quest
                         {detail.questionAnswer.description}
                       </p>
                     )}
-                  </div>
+                  </GradientCard>
                 </div>
               );
             })}
@@ -82,7 +83,7 @@ export const PersonalityResult = ({ userAnswers, pattern, questionAnswers, quest
 
   return (
     <div className="space-y-4">
-      <div className="p-6 bg-gradient-to-r from-purple-700 to-pink-700 rounded-lg text-white shadow-lg">
+      <GradientCard variant="gradient-purple" className="p-6">
         <h2 className="text-3xl font-bold mb-3">{pattern.name}</h2>
         <p className="text-lg leading-relaxed">{pattern.message}</p>
         {pattern.description && (
@@ -90,7 +91,7 @@ export const PersonalityResult = ({ userAnswers, pattern, questionAnswers, quest
             {pattern.description}
           </p>
         )}
-      </div>
+      </GradientCard>
       
       {/* Show user's answers for context */}
       {userAnswers.length > 0 && (
@@ -122,7 +123,7 @@ export const PersonalityResult = ({ userAnswers, pattern, questionAnswers, quest
                     {detail.question.text}
                   </p>
                 )}
-                <div className="p-4 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg text-white shadow-md">
+                <GradientCard variant="gradient-blue" className="p-4">
                   <h4 className="text-lg font-bold mb-1">{detail.questionAnswer.name}</h4>
                   <p className="text-sm leading-relaxed">{detail.questionAnswer.message}</p>
                   {detail.questionAnswer.description && (
@@ -130,7 +131,7 @@ export const PersonalityResult = ({ userAnswers, pattern, questionAnswers, quest
                       {detail.questionAnswer.description}
                     </p>
                   )}
-                </div>
+                </GradientCard>
               </div>
             );
           })}

@@ -1,6 +1,7 @@
 "use client";
 
 import { QuestionAnswer } from "@/entities/questionAnswer";
+import { GradientCard } from "@/components/ui";
 
 type Props = {
   questionAnswer: QuestionAnswer;
@@ -8,7 +9,7 @@ type Props = {
 
 export const QuestionPersonalizedAnswer = ({ questionAnswer }: Props) => {
   return (
-    <div className="p-4 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg text-white shadow-md">
+    <GradientCard variant="gradient-blue" className="p-4">
       <h3 className="text-xl font-bold mb-2">{questionAnswer.name}</h3>
       <p className="text-base leading-relaxed">{questionAnswer.message}</p>
       {questionAnswer.description && (
@@ -16,6 +17,6 @@ export const QuestionPersonalizedAnswer = ({ questionAnswer }: Props) => {
           {questionAnswer.description}
         </p>
       )}
-    </div>
+    </GradientCard>
   );
 };
