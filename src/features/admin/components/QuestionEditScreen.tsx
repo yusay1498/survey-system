@@ -68,18 +68,18 @@ export const QuestionEditScreen = ({ userEmail, userId, onLogout }: AdminDashboa
         <QuestionManager questions={questions || []} onUpdate={refreshQuestions} />
 
         <div className="border-t pt-6 dark:border-gray-700">
-          <QuestionAnswerManager 
-            questionAnswers={questionAnswers || []} 
+          <QuestionAnswerManager
+            questionAnswers={questionAnswers || []}
             questions={questions || []}
-            onUpdate={refreshQuestionAnswers} 
+            onUpdate={refreshQuestionAnswers}
           />
         </div>
 
         <div className="border-t pt-6 dark:border-gray-700">
-          <ResultPatternManager 
-            patterns={patterns || []} 
+          <ResultPatternManager
+            patterns={patterns || []}
             questions={questions || []}
-            onUpdate={refreshPatterns} 
+            onUpdate={refreshPatterns}
           />
         </div>
       </div>

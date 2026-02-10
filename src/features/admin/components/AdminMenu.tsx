@@ -13,7 +13,7 @@ export const AdminMenu = ({ userEmail, userId, onLogout }: AdminDashboardProps) 
         {/* 質問編集画面へのリンク */}
         <a
           href={`${BASE_PATH}/admin/questions`}
-          className="block p-8 border rounded-lg bg-white shadow hover:shadow-lg transition-shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-750"
+          className="block p-8 border rounded-lg bg-white shadow hover:shadow-lg transition-shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
         >
           <div className="flex items-center gap-4 mb-4">
             <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
@@ -41,7 +41,7 @@ export const AdminMenu = ({ userEmail, userId, onLogout }: AdminDashboardProps) 
         {/* アンケート結果確認画面へのリンク */}
         <a
           href={`${BASE_PATH}/admin/results`}
-          className="block p-8 border rounded-lg bg-white shadow hover:shadow-lg transition-shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-750"
+          className="block p-8 border rounded-lg bg-white shadow hover:shadow-lg transition-shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
         >
           <div className="flex items-center gap-4 mb-4">
             <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
