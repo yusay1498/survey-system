@@ -13,6 +13,9 @@ export { isAdmin } from "./api/isAdmin";
 // Admin Components exports
 export { AdminDashboard } from "./components/AdminDashboard";
 export { AdminHeader } from "./components/AdminHeader";
+export { AdminMenu } from "./components/AdminMenu";
+export { QuestionEditScreen } from "./components/QuestionEditScreen";
+export { ResultScreen } from "./components/ResultScreen";
 export { QuestionManager } from "./components/QuestionManager";
 export { QuestionAnswerManager } from "./components/QuestionAnswerManager";
 export { ResultPatternManager } from "./components/ResultPatternManager";

@@ -3,13 +3,13 @@
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { isAdmin } from "@/features/admin/api/isAdmin";
 import { UnauthorizedAccess } from "@/features/admin/components/UnauthorizedAccess";
-import { AdminMenu } from "@/features/admin/components/AdminMenu";
+import { QuestionEditScreen } from "@/features/admin/components/QuestionEditScreen";
 import { signOut } from "@/features/auth/api/signOut";
 import { LoadingScreen } from "@/components/ui";
 import { BASE_PATH } from "@/lib/constants";
 import { useEffect, useState } from "react";
 
-export default function AdminPage() {
+export default function QuestionEditPage() {
   const { user, loading } = useAuth();
   const [isAdminUser, setIsAdminUser] = useState(false);
   const [checking, setChecking] = useState(true);
@@ -50,7 +50,7 @@ export default function AdminPage() {
   }
 
   return (
-    <AdminMenu
+    <QuestionEditScreen
       userEmail={user.email}
       userId={user.uid}
       onLogout={handleLogout}
