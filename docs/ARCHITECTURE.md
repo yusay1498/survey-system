@@ -8,6 +8,11 @@
 src/
 ├── app/                    # Next.js App Router ページ
 │   ├── admin/             # 管理者ページ
+│   │   ├── page.tsx      # 管理画面トップ（メニュー）
+│   │   ├── questions/    # 質問編集画面
+│   │   │   └── page.tsx
+│   │   └── results/      # アンケート結果確認画面
+│   │       └── page.tsx
 │   └── page.tsx           # ホームページ
 ├── components/            # 共通UIコンポーネント
 │   └── ui/               # 再利用可能なUIコンポーネント
@@ -24,6 +29,13 @@ src/
 │   ├── admin/           # 管理者機能
 │   │   ├── api/        # API関数
 │   │   ├── components/ # コンポーネント
+│   │   │   ├── AdminDashboard.tsx    # 旧: 統合管理画面（非推奨）
+│   │   │   ├── AdminMenu.tsx         # 管理画面メニュー
+│   │   │   ├── QuestionEditScreen.tsx # 質問編集画面
+│   │   │   ├── ResultScreen.tsx       # アンケート結果確認画面
+│   │   │   ├── QuestionManager.tsx
+│   │   │   ├── QuestionAnswerManager.tsx
+│   │   │   └── ResultPatternManager.tsx
 │   │   ├── types.ts    # 型定義
 │   │   └── index.ts    # barrel export
 │   ├── auth/           # 認証機能
