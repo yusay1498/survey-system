@@ -33,6 +33,7 @@ export const useAdminAccess = (): AdminAccessState => {
           setChecking(false);
         }
       } else {
+        setIsAdminUser(false);
         setChecking(false);
       }
     };
