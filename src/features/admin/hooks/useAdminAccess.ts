@@ -19,7 +19,7 @@ export const useAdminAccess = (): AdminAccessState => {
   const { user, loading } = useAuth();
   const [isAdminUser, setIsAdminUser] = useState(false);
   const [checking, setChecking] = useState(true);
-  const checkedUidRef = useRef<string | null>(null);
+  const checkedUidRef = useRef<string | null | undefined>(undefined);
 
   useEffect(() => {
     let cancelled = false;
