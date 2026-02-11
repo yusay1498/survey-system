@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { isAdmin } from "@/features/admin/api/isAdmin";
 
@@ -19,20 +19,25 @@ export const useAdminAccess = (): AdminAccessState => {
   const { user, loading } = useAuth();
   const [isAdminUser, setIsAdminUser] = useState(false);
   const [checking, setChecking] = useState(true);
+  const checkedUidRef = useRef<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
 
     const checkAdmin = async () => {
+      const currentUid = user?.uid ?? null;
+
       if (user && !user.isAnonymous) {
         try {
           const adminStatus = await isAdmin(user.uid);
           if (cancelled) return;
           setIsAdminUser(adminStatus);
+          checkedUidRef.current = currentUid;
         } catch (error) {
           if (cancelled) return;
           console.error("管理者権限の確認に失敗しました:", error);
           setIsAdminUser(false);
+          checkedUidRef.current = currentUid;
         } finally {
           if (cancelled) return;
           setChecking(false);
@@ -41,13 +46,18 @@ export const useAdminAccess = (): AdminAccessState => {
         // 匿名ユーザーまたはユーザーなしの場合は即座に判定
         if (cancelled) return;
         setIsAdminUser(false);
+        checkedUidRef.current = currentUid;
         setChecking(false);
       }
     };
 
     if (!loading) {
-      setChecking(true);
-      checkAdmin();
+      const currentUid = user?.uid ?? null;
+      // ユーザーが変わったら再チェックが必要
+      if (checkedUidRef.current !== currentUid) {
+        setChecking(true);
+        checkAdmin();
+      }
     }
 
     return () => {
