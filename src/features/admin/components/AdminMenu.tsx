@@ -22,6 +22,7 @@ export const AdminMenu = ({ userEmail, userId, onLogout }: AdminDashboardProps) 
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"
@@ -50,6 +51,7 @@ export const AdminMenu = ({ userEmail, userId, onLogout }: AdminDashboardProps) 
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"

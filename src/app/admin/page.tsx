@@ -1,32 +1,14 @@
 "use client";
 
-import { useAuth } from "@/features/auth/hooks/useAuth";
-import { isAdmin } from "@/features/admin/api/isAdmin";
+import { useAdminAccess } from "@/features/admin/hooks/useAdminAccess";
 import { UnauthorizedAccess } from "@/features/admin/components/UnauthorizedAccess";
 import { AdminMenu } from "@/features/admin/components/AdminMenu";
 import { signOut } from "@/features/auth/api/signOut";
 import { LoadingScreen } from "@/components/ui";
 import { BASE_PATH } from "@/lib/constants";
-import { useEffect, useState } from "react";
 
 export default function AdminPage() {
-  const { user, loading } = useAuth();
-  const [isAdminUser, setIsAdminUser] = useState(false);
-  const [checking, setChecking] = useState(true);
-
-  useEffect(() => {
-    const checkAdmin = async () => {
-      if (user) {
-        const adminStatus = await isAdmin(user.uid);
-        setIsAdminUser(adminStatus);
-      }
-      setChecking(false);
-    };
-
-    if (!loading) {
-      checkAdmin();
-    }
-  }, [user, loading]);
+  const { user, loading, isAdminUser, checking } = useAdminAccess();
 
   const handleLogout = async () => {
     await signOut();

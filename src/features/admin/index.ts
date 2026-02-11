@@ -10,6 +10,10 @@ export { updateResultPattern } from "./api/updateResultPattern";
 export { deleteResultPattern } from "./api/deleteResultPattern";
 export { isAdmin } from "./api/isAdmin";
 
+// Admin Hooks exports
+export { useAdminAccess } from "./hooks/useAdminAccess";
+export type { AdminAccessState } from "./hooks/useAdminAccess";
+
 // Admin Components exports
 export { AdminDashboard } from "./components/AdminDashboard";
 export { AdminHeader } from "./components/AdminHeader";
