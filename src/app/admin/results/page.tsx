@@ -2,12 +2,12 @@
 
 import { useAdminAccess } from "@/features/admin/hooks/useAdminAccess";
 import { UnauthorizedAccess } from "@/features/admin/components/UnauthorizedAccess";
-import { AdminMenu } from "@/features/admin/components/AdminMenu";
+import { ResultScreen } from "@/features/admin/components/ResultScreen";
 import { signOut } from "@/features/auth/api/signOut";
 import { LoadingScreen } from "@/components/ui";
 import { BASE_PATH } from "@/lib/constants";
 
-export default function AdminPage() {
+export default function ResultPage() {
   const { user, loading, isAdminUser, checking } = useAdminAccess();
 
   const handleLogout = async () => {
@@ -32,7 +32,7 @@ export default function AdminPage() {
   }
 
   return (
-    <AdminMenu
+    <ResultScreen
       userEmail={user.email}
       userId={user.uid}
       onLogout={handleLogout}
