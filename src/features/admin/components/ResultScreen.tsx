@@ -13,7 +13,7 @@ export const ResultScreen = ({ userEmail, userId, onLogout }: AdminDashboardProp
   const {
     data: questions,
     loading: questionsLoading,
-  } = useAsyncData<Question[]>(() => getQuestions());
+  } = useAsyncData<Question[]>(getQuestions);
 
   if (questionsLoading) {
     return (

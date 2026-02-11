@@ -20,19 +20,19 @@ export const QuestionEditScreen = ({ userEmail, userId, onLogout }: AdminDashboa
     data: questions,
     loading: questionsLoading,
     refresh: refreshQuestions,
-  } = useAsyncData<Question[]>(() => getQuestions());
+  } = useAsyncData<Question[]>(getQuestions);
 
   const {
     data: patterns,
     loading: patternsLoading,
     refresh: refreshPatterns,
-  } = useAsyncData<ResultPattern[]>(() => getResultPatterns());
+  } = useAsyncData<ResultPattern[]>(getResultPatterns);
 
   const {
     data: questionAnswers,
     loading: questionAnswersLoading,
     refresh: refreshQuestionAnswers,
-  } = useAsyncData<QuestionAnswer[]>(() => getQuestionAnswers());
+  } = useAsyncData<QuestionAnswer[]>(getQuestionAnswers);
 
   const isLoading = questionsLoading || patternsLoading || questionAnswersLoading;
 
