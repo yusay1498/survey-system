@@ -112,8 +112,8 @@ npm run dev
 
 ## 関連ドキュメント
 
-- [開発ガイド](./DEVELOPMENT.md) - 開発環境のセットアップ
+- [開発ガイド](../technical/DEVELOPMENT.md) - 開発環境のセットアップ
 - [管理者セットアップガイド](./ADMIN_SETUP.md) - 管理者アカウントの作成
-- [実装内容の説明](./IMPLEMENTATION_SUMMARY.md) - システムの技術的な詳細
+- [実装内容の説明](../technical/IMPLEMENTATION_SUMMARY.md) - システムの技術的な詳細
 - [結果パターン設定ガイド](./RESULT_PATTERNS.md) - パーソナライズされた結果の設定
 - [サンプルデータガイド](./SAMPLE_DATA.md) - テスト用サンプルデータ

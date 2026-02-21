@@ -75,14 +75,14 @@
 
 ### 管理者アカウントの作成
 
-詳細な手順は [ADMIN_SETUP.md](./ADMIN_SETUP.md) を参照してください。
+詳細な手順は [ADMIN_SETUP.md](../guides/ADMIN_SETUP.md) を参照してください。
 
 1. Firebase Consoleで管理者用のメールアドレスとパスワードを設定
 2. そのユーザーのUIDをFirestoreの `admins` コレクションに追加
 
 ### 結果パターンの設定
 
-詳細な手順は [RESULT_PATTERNS.md](./RESULT_PATTERNS.md) を参照してください。
+詳細な手順は [RESULT_PATTERNS.md](../guides/RESULT_PATTERNS.md) を参照してください。
 
 管理画面から結果パターンを作成するか、Firebase Consoleで直接 `resultPatterns` コレクションにデータを追加します。
 
@@ -96,11 +96,11 @@
 
 ## セキュリティ
 
-現在のFirestoreルールは開発用です。本番環境では [ADMIN_SETUP.md](./ADMIN_SETUP.md) に記載されている適切なセキュリティルールを設定してください。
+現在のFirestoreルールは開発用です。本番環境では [ADMIN_SETUP.md](../guides/ADMIN_SETUP.md) に記載されている適切なセキュリティルールを設定してください。
 
 ## 参考ドキュメント
 
 - [開発ガイド](./DEVELOPMENT.md) - 開発環境のセットアップ
-- [管理者セットアップガイド](./ADMIN_SETUP.md) - 管理者アカウントの作成
-- [結果パターン設定ガイド](./RESULT_PATTERNS.md) - パーソナライズされた結果の設定
-- [サンプルデータガイド](./SAMPLE_DATA.md) - テスト用サンプルデータ
+- [管理者セットアップガイド](../guides/ADMIN_SETUP.md) - 管理者アカウントの作成
+- [結果パターン設定ガイド](../guides/RESULT_PATTERNS.md) - パーソナライズされた結果の設定
+- [サンプルデータガイド](../guides/SAMPLE_DATA.md) - テスト用サンプルデータ

@@ -38,11 +38,20 @@ Firebase Consoleで管理者アカウントを作成してください。詳細�
 
 詳細な情報は [docs](./docs) ディレクトリを参照してください：
 
-- **[開発ガイド](./docs/DEVELOPMENT.md)** - 開発環境のセットアップと開発方法
-- **[管理者セットアップガイド](./docs/ADMIN_SETUP.md)** - 管理者アカウントの作成方法
-- **[結果パターン設定ガイド](./docs/RESULT_PATTERNS.md)** - パーソナライズされた結果を表示する方法
-- **[実装内容の説明](./docs/IMPLEMENTATION_SUMMARY.md)** - 技術的な詳細と実装内容
-- **[次のステップ](./docs/NEXT_STEPS.md)** - テスト手順とトラブルシューティング
+### クイックスタート
+- **[開発ガイド](./docs/technical/DEVELOPMENT.md)** - 開発環境のセットアップと開発方法
+- **[管理者セットアップガイド](./docs/guides/ADMIN_SETUP.md)** - 管理者アカウントの作成方法
+- **[次のステップ](./docs/guides/NEXT_STEPS.md)** - テスト手順とトラブルシューティング
+
+### 機能ガイド
+- **[結果パターン設定ガイド](./docs/guides/RESULT_PATTERNS.md)** - パーソナライズされた結果を表示する方法
+- **[サンプルデータガイド](./docs/guides/SAMPLE_DATA.md)** - テスト用サンプルデータの設定
+
+### 技術情報
+- **[プロジェクト構造ガイド](./docs/technical/ARCHITECTURE.md)** - アーキテクチャと設計パターン
+- **[実装内容の説明](./docs/technical/IMPLEMENTATION_SUMMARY.md)** - 技術的な詳細と実装内容
+
+全てのドキュメントの一覧は [docs/README.md](./docs/README.md) をご覧ください。
 
 ## 🛠️ 技術スタック
 
